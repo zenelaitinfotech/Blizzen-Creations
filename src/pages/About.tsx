@@ -9,14 +9,16 @@ const stats = [
   { value: "5 Yrs", label: "Of Excellence" },
 ];
 
+const MAPS_URL = "https://www.google.com/maps/place/Blizzen+Creation%27s/@13.0856159,80.2101490,17z";
+
 const About = () => {
   return (
     <div style={{ fontFamily: "'Segoe UI', sans-serif", background: "#ffffff", color: "#0f172a" }}>
 
       {/* ── HERO — Centered ── */}
-      <section style={{ background: "#1e3a35",padding: "30px 0 32px", position: "relative", overflow: "hidden" }}>
+      <section style={{ background: "#1e3a35", padding: "30px 0 32px", position: "relative", overflow: "hidden" }}>
 
-        {/* SVG Background Pattern */}
+        {/* Background image */}
         <div style={{
           position: "absolute",
           inset: 0,
@@ -27,7 +29,7 @@ const About = () => {
           backgroundRepeat: "no-repeat",
           pointerEvents: "none",
           zIndex: 0,
-           filter: "blur(8px)",
+          filter: "blur(8px)",
         }} />
 
         {/* Decorative lines */}
@@ -40,20 +42,33 @@ const About = () => {
         {/* Content */}
         <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 32px", textAlign: "center", position: "relative", zIndex: 2 }}>
 
-          {/* Breadcrumb */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 40, fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "rgba(255,255,255,0.4)" }}>
-          </div>
-
           {/* ABOUT US label */}
-          <p style={{ fontSize: 32, fontWeight: 900, color:"black" , letterSpacing: "3px", textTransform: "uppercase", marginBottom: 6,textAlign:"center" }}>
+          <p style={{ fontSize: 32, fontWeight: 900, color: "black", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 6, textAlign: "center" }}>
             About Us
           </p>
 
-          {/* Location badge */}
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 30, padding: "5px 16px", marginBottom: 12 }}>
-            <MapPin size={23} color="#c9953a" />
-            <span style={{ fontSize: 20, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "black" }}>Anna Nagar, Chennai</span>
-          </div>
+          {/* Location badge — clickable */}
+          <a
+            href={MAPS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: "none", display: "inline-block", marginBottom: 12 }}
+          >
+            <div
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 30, padding: "5px 16px", cursor: "pointer", transition: "background 0.2s, border-color 0.2s" }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLDivElement).style.background = "rgba(201,149,58,0.18)";
+                (e.currentTarget as HTMLDivElement).style.borderColor = "#c9953a";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLDivElement).style.background = "rgba(255,255,255,0.08)";
+                (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(255,255,255,0.15)";
+              }}
+            >
+              <MapPin size={23} color="#c9953a" />
+              <span style={{ fontSize: 20, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "black" }}>Anna Nagar, Chennai</span>
+            </div>
+          </a>
 
           {/* BIG heading */}
           <h1 style={{ fontSize: "clamp(36px, 5vw, 64px)", fontWeight: 900, color: "black", lineHeight: 1.08, letterSpacing: "-2px", marginBottom: 12 }}>
@@ -72,7 +87,7 @@ const About = () => {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, borderTop: "2px solid rgba(0,0,0,0.8)", paddingTop: 20 }}>
             {stats.map((s, i) => (
               <div key={i} style={{ textAlign: "center", padding: "0 16px", borderRight: i < 3 ? "2px solid rgba(0,0,0,0.8)" : "none" }}>
-                <div style={{ fontSize: 32, fontWeight: 900, color:  "#000000" , letterSpacing: "-1px", marginBottom: 6 }}>{s.value}</div>
+                <div style={{ fontSize: 32, fontWeight: 900, color: "#000000", letterSpacing: "-1px", marginBottom: 6 }}>{s.value}</div>
                 <div style={{ fontSize: 18, color: "white", textTransform: "uppercase", letterSpacing: "1.5px", fontWeight: 800 }}>{s.label}</div>
               </div>
             ))}
@@ -83,19 +98,19 @@ const About = () => {
 
       {/* ── WHO WE ARE ── */}
       <section style={{ padding: "80px 0", background: "#ffffff" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 32px",   }}>
-          <p style={{ fontSize: 30, fontWeight: 700, color: "#1e3a35", letterSpacing: "2.5px", textTransform: "uppercase", marginBottom: 12 ,  }}>Who We Are</p>
+        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 32px" }}>
+          <p style={{ fontSize: 45, fontWeight: 700, color: "#1e3a35", letterSpacing: "2.5px", textTransform: "uppercase", marginBottom: 12, textAlign: "center" }}>Who We Are</p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "start" }}>
-            <div >
-              <h2 style={{ fontSize: 46, fontWeight: 900, color: "#0f172a", letterSpacing: "-1.5px", marginBottom: 20, lineHeight: 1.1 ,  marginTop: 90, }}>
+            <div>
+              <h2 style={{ fontSize: 46, fontWeight: 900, color: "#0f172a", letterSpacing: "-1.5px", marginBottom: 20, lineHeight: 1.1, marginTop: 90 }}>
                 Chennai's Premier IT & Non-IT Training Institute
               </h2>
             </div>
             <div>
-              <p style={{ fontSize: 20,  color: "#64748b", lineHeight: 1.85, marginBottom: 16 }}>
+              <p style={{ fontSize: 20, color: "#64748b", lineHeight: 1.85, marginBottom: 16 }}>
                 We are a dedicated team of IT professionals, developers, digital marketers, and industry trainers who bring strong real-time experience from the field. Our goal is to bridge the gap between academic learning and industry expectations by focusing on practical, job-ready skills. We ensure that students learn exactly what companies actually need, helping them build confidence and become career-ready.
               </p>
-              <p style={{ fontSize: 20,  color: "#64748b", lineHeight: 1.95 }}>
+              <p style={{ fontSize: 20, color: "#64748b", lineHeight: 1.95 }}>
                 We've trained 1000+ students across IT and Non-IT tracks, partnered with 100+ companies, and maintained a near-perfect placement record — because we design every course around what employers actually need.
               </p>
             </div>
@@ -108,7 +123,7 @@ const About = () => {
         <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 32px" }}>
 
           <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <p style={{ fontSize: 30, fontWeight: 700, color: "#1e3a35", letterSpacing: "2.5px", textTransform: "uppercase", marginBottom: 12 }}>What Drives Us</p>
+            <p style={{ fontSize: 45, fontWeight: 700, color: "#1e3a35", letterSpacing: "2.5px", textTransform: "uppercase", marginBottom: 12, textAlign: "center" }}>What Drives Us</p>
             <h2 style={{ fontSize: 36, fontWeight: 900, color: "#0f172a", letterSpacing: "-1.5px", margin: 0 }}>Mission & Vision</h2>
           </div>
 
@@ -118,7 +133,7 @@ const About = () => {
               <div style={{ width: 48, height: 48, borderRadius: 12, background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
                 <Users size={22} color="white" />
               </div>
-              <p style={{ fontSize: 15, fontWeight: 700, color: "#93c5fd", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 12 }}>Our Mission</p>
+              <p style={{ fontSize: 20, fontWeight: 900, color: "#93c5fd", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 12 }}>Our Mission</p>
               <h3 style={{ fontSize: 22, fontWeight: 700, color: "white", lineHeight: 1.3, marginBottom: 16, letterSpacing: "-0.5px" }}>
                 Empowering students with practical and affordable education.
               </h3>
@@ -132,7 +147,7 @@ const About = () => {
               <div style={{ width: 48, height: 48, borderRadius: 12, background: "#f0f7f5", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
                 <Award size={22} color="#1e3a35" />
               </div>
-              <p style={{ fontSize: 15, fontWeight: 700, color: "#1e3a35", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 12 }}>Our Vision</p>
+              <p style={{ fontSize: 20, fontWeight: 900, color: "#1e3a35", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 12 }}>Our Vision</p>
               <h3 style={{ fontSize: 22, fontWeight: 700, color: "#0f172a", lineHeight: 1.3, marginBottom: 16, letterSpacing: "-0.5px" }}>
                 Becoming a leading institute for skill-based education and placements.
               </h3>
@@ -166,19 +181,19 @@ const About = () => {
       <section style={{ padding: "64px 0", background: "#ffffff", borderTop: "1px solid #e2e8f0" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 32px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
           <div>
-            <h3 style={{ fontSize: 28, fontWeight: 700, color: "#0f172a", letterSpacing: "-0.5px", marginBottom: 6 }}>Ready to start your journey?</h3>
-            <p style={{ fontSize: 19, color: "#64748b", margin: 0 }}>Book a free demo class — no commitment, no pressure.</p>
+            <h3 style={{ fontSize: 30, fontWeight: 700, color: "#0f172a", letterSpacing: "-0.5px", marginBottom: 6 }}>Ready to start your journey?</h3>
+            <p style={{ fontSize: 20, color: "#64748b", margin: 0 }}>Book a free demo class — no commitment, no pressure.</p>
           </div>
           <div style={{ display: "flex", gap: 12 }}>
             <Link to="/contact">
-              <button style={{ background: "#1e3a35", color: "white", border: "none", padding: "13px 28px", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, transition: "background 0.2s" }}
+              <button style={{ background: "#1e3a35", color: "white", border: "none", padding: "13px 28px", borderRadius: 8, fontSize: 18, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, transition: "background 0.2s" }}
                 onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = "#f59e0b")}
                 onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = "#1e3a35")}>
                 Book Free Demo <ArrowRight size={15} />
               </button>
             </Link>
             <Link to="/courses">
-              <button style={{ background: "transparent", color: "#1e3a35", border: "1.5px solid #a7c4bc", padding: "13px 28px", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+              <button style={{ background: "transparent", color: "#1e3a35", border: "1.5px solid #a7c4bc", padding: "13px 28px", borderRadius: 8, fontSize: 18, fontWeight: 700, cursor: "pointer" }}>
                 Browse Courses
               </button>
             </Link>

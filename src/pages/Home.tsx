@@ -69,7 +69,6 @@ const Home = () => {
         });
       }
       if (coursesData.success && coursesData.data.length > 0) {
-        // Always ensure 6 courses — fill from STATIC_COURSES if API returns fewer
         const apiCourses = coursesData.data.slice(0, 6);
         const merged = [...apiCourses];
         if (merged.length < 6) {
@@ -233,10 +232,10 @@ const Home = () => {
                   placeholder="Phone Number"
                   style={{ flex: 1, border: '1.5px solid #d4eae4', background: '#f0f7f5', borderRadius: 8, padding: '10px 14px', fontSize: 17, outline: 'none', color: '#0f172a', minWidth: 0 }} />
                 <Link to={`/contact?name=${encodeURIComponent(enquiryName)}&phone=${encodeURIComponent(enquiryPhone)}`}>
-  <button style={{ background: '#1e3a35', color: 'white', border: 'none', padding: '10px 18px', borderRadius: 8, fontSize: 17, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}>
-    Call Me →
-  </button>
-</Link>
+                  <button style={{ background: '#1e3a35', color: 'white', border: 'none', padding: '10px 18px', borderRadius: 8, fontSize: 17, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                    Call Me →
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -251,18 +250,16 @@ const Home = () => {
       </section>
 
       {/* ── COMPANIES TICKER ── */}
- {/* ── COMPANIES TICKER ── */}
-<div style={{ background: '#f1f5f9', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', padding: '16px 0' }}>
-  <p style={{ textAlign: 'center', fontSize: 18, fontWeight: 700, color: '#94a3b8', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: 10 }}>Our Alumni Work At</p>
-  <div style={{ overflow: 'hidden', width: '100%', position: 'relative' }}>
-    <div style={{ display: 'flex', width: 'max-content', animation: 'companiesTicker 60s linear infinite' }}>
-      {/* ✅ Render 4 copies so there's no gap when looping */}
-      {[...companies, ...companies, ...companies, ...companies].map((co, i) => (
-        <span key={i} style={{ fontSize: 18, fontWeight: 600, color: '#475569', background: 'white', border: '1px solid #e2e8f0', padding: '5px 16px', borderRadius: 6, flexShrink: 0, marginRight: 12, whiteSpace: 'nowrap' }}>{co}</span>
-      ))}
-    </div>
-  </div>
-</div>
+      <div style={{ background: '#f1f5f9', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', padding: '16px 0' }}>
+        <p style={{ textAlign: 'center', fontSize: 18, fontWeight: 700, color: '#94a3b8', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: 10 }}>Our Alumni Work At</p>
+        <div style={{ overflow: 'hidden', width: '100%', position: 'relative' }}>
+          <div style={{ display: 'flex', width: 'max-content', animation: 'companiesTicker 60s linear infinite' }}>
+            {[...companies, ...companies, ...companies, ...companies].map((co, i) => (
+              <span key={i} style={{ fontSize: 18, fontWeight: 600, color: '#475569', background: 'white', border: '1px solid #e2e8f0', padding: '5px 16px', borderRadius: 6, flexShrink: 0, marginRight: 12, whiteSpace: 'nowrap' }}>{co}</span>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* ── STATS BAND ── */}
       <section style={{ background: '#1e3a35', padding: '40px 0' }}>
@@ -298,30 +295,36 @@ const Home = () => {
 
           {featuredCourses.length > 0 ? (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-              {/* ✅ FIXED: was slice(0, 5) — now shows all 6 */}
               {featuredCourses.slice(0, 6).map((course, i) => (
                 <div key={course._id} style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 16, padding: '22px 20px', position: 'relative', overflow: 'hidden', transition: 'all 0.2s', cursor: 'pointer' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#1e3a35'; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 24px rgba(30,58,53,0.1)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-3px)'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#e2e8f0'; (e.currentTarget as HTMLDivElement).style.boxShadow = 'none'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; }}>
+
+                  {/* Course number */}
                   <span style={{ position: 'absolute', top: 14, right: 18, fontSize: 40, fontWeight: 900, color: '#f0f7f5', lineHeight: 1, userSelect: 'none' }}>
                     {String(i + 1).padStart(2, '0')}
                   </span>
+
+                  {/* Icon */}
                   <div style={{ width: 44, height: 44, borderRadius: 12, background: courseColors[i] || '#d4eae4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, marginBottom: 14 }}>
                     {courseIcons[i] || '📚'}
                   </div>
+
+                  {/* Title */}
                   <h4 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: '0 0 6px' }}
                     dangerouslySetInnerHTML={{ __html: sanitizeHtml(course.title) }} />
+
+                  {/* Description — 2 lines max */}
                   <p style={{ fontSize: 18, color: '#64748b', lineHeight: 1.6, margin: '0 0 16px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
                     dangerouslySetInnerHTML={{ __html: sanitizeHtml(course.shortDescription || course.description) }} />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', gap: 6 }}>
-                      <span style={{ fontSize: 18, fontWeight: 700, background: '#d4eae4', color: '#1e3a35', padding: '3px 10px', borderRadius: 20 }}>{course.level}</span>
-                      <span style={{ fontSize: 18, fontWeight: 700, background: '#f1f5f9', color: '#64748b', padding: '3px 10px', borderRadius: 20 }}>{course.duration}</span>
-                    </div>
+
+                  {/* Arrow link only — no level/duration badges */}
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                     <Link to={`/courses/${course.slug}`}>
                       <span style={{ fontSize: 18, fontWeight: 700, color: '#1e3a35' }}>→</span>
                     </Link>
                   </div>
+
                 </div>
               ))}
             </div>
@@ -468,7 +471,7 @@ const Home = () => {
 
       <EnquiryPopup isOpen={isEnquiryOpen} onClose={() => setIsEnquiryOpen(false)} />
 
-            <style>{`
+      <style>{`
         @keyframes companiesTicker {
           0%   { transform: translateX(0); }
           100% { transform: translateX(-50%); }
