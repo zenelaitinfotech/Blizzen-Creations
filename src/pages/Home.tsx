@@ -28,8 +28,69 @@ interface Course {
 
 interface TrustStats {
   studentCount: string; studentLabel: string;
-  ratingPlatforms: Array<{ name: string; rating: number; icon: string; color: string; isActive: boolean }>;
+  ratingPlatforms: Array<{ name: string; rating: number; icon: string; color: string; isActive: boolean; desc?: string }>;
 }
+
+// ── Flip Rating Card ──
+const FlipRatingCard = ({ platform }: { platform: { name: string; rating: number; color: string; desc?: string } }) => {
+  const [flipped, setFlipped] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setFlipped(true)}
+      onMouseLeave={() => setFlipped(false)}
+      style={{ width: 220, height: 200, perspective: '600px', cursor: 'pointer' }}
+    >
+      <div style={{
+        width: '100%', height: '100%', position: 'relative',
+        transformStyle: 'preserve-3d',
+        transition: 'transform 0.6s ease',
+        transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+      }}>
+        {/* Front */}
+        <div style={{
+          position: 'absolute', inset: 0, borderRadius: 16,
+          border: '1.5px solid #e2e8f0', background: 'white',
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          justifyContent: 'center', backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+        }}>
+          <div style={{ fontSize: 44, fontWeight: 900, color: '#1e3a35', letterSpacing: '-2px', marginBottom: 4 }}>
+            {platform.rating.toFixed(1)}
+          </div>
+          <div style={{ fontSize: 14, color: '#94a3b8', marginBottom: 8 }}>Ratings on</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+            <Star size={16} style={{ color: platform.color }} />
+            <span style={{ fontWeight: 700, fontSize: 16, color: '#0f172a' }}>{platform.name}</span>
+          </div>
+          <div style={{ display: 'flex', gap: 3 }}>
+            {[...Array(5)].map((_, si) => <Star key={si} size={12} style={{ color: '#facc15', fill: '#facc15' }} />)}
+          </div>
+        </div>
+
+        {/* Back */}
+        <div style={{
+          position: 'absolute', inset: 0, borderRadius: 16,
+          background: '#1e3a35',
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          justifyContent: 'center', padding: '1.5rem', textAlign: 'center',
+          backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
+          transform: 'rotateY(180deg)',
+        }}>
+          <div style={{ fontSize: 44, fontWeight: 900, color: 'white', letterSpacing: '-2px', marginBottom: 6 }}>
+            {platform.rating.toFixed(1)}
+          </div>
+          <div style={{ display: 'flex', gap: 3, marginBottom: 12 }}>
+            {[...Array(5)].map((_, si) => <Star key={si} size={12} style={{ color: '#facc15', fill: '#facc15' }} />)}
+          </div>
+          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', lineHeight: 1.6, margin: 0 }}>
+            {platform.desc ?? `Based on verified reviews from our alumni on ${platform.name}`}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Home = () => {
   const { toast } = useToast();
@@ -38,15 +99,14 @@ const Home = () => {
   const [trustStats, setTrustStats] = useState<TrustStats>({
     studentCount: '1,000+', studentLabel: 'Students Alumni',
     ratingPlatforms: [
-      { name: 'Trustpilot', rating: 4.8, icon: 'trustpilot', color: '#00b67a', isActive: true },
-      { name: 'Google', rating: 4.9, icon: 'google', color: '#4285F4', isActive: true },
-      { name: 'Microsoft', rating: 4.7, icon: 'microsoft', color: '#00a4ef', isActive: true }
+      { name: 'Trustpilot', rating: 4.8, icon: 'trustpilot', color: '#00b67a', isActive: true, desc: 'Based on 320+ verified reviews from our alumni' },
+      { name: 'Google',     rating: 4.9, icon: 'google',     color: '#4285F4', isActive: true, desc: 'Highest rated IT institute in Anna Nagar, Chennai' },
+      { name: 'Microsoft',  rating: 4.7, icon: 'microsoft',  color: '#00a4ef', isActive: true, desc: 'Recognized for excellence in tech education' },
     ],
   });
   const [loading, setLoading] = useState(true);
   const [enquiryName, setEnquiryName] = useState('');
   const [enquiryPhone, setEnquiryPhone] = useState('');
-  const [showAll, setShowAll] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState('');
   const [isEnquiryOpen, setIsEnquiryOpen] = useState(false);
 
@@ -63,18 +123,15 @@ const Home = () => {
           ...homeData.data,
           stats: [
             { label: 'Students Trained', value: '1000+' },
-            { label: 'Placement Rate', value: '100%' },
-            { label: 'Average Salary', value: '₹5 LPA' },
+            { label: 'Placement Rate',   value: '100%' },
+            { label: 'Average Salary',   value: '₹5 LPA' },
           ]
         });
       }
       if (coursesData.success && coursesData.data.length > 0) {
         const apiCourses = coursesData.data.slice(0, 6);
         const merged = [...apiCourses];
-        if (merged.length < 6) {
-          const extras = STATIC_COURSES.slice(merged.length, 6) as any[];
-          merged.push(...extras);
-        }
+        if (merged.length < 6) merged.push(...(STATIC_COURSES.slice(merged.length, 6) as any[]));
         setFeaturedCourses(merged);
       } else {
         setFeaturedCourses(STATIC_COURSES.slice(0, 6) as any[]);
@@ -83,8 +140,8 @@ const Home = () => {
         setTrustStats({
           ...trustData,
           ratingPlatforms: [
-            ...(trustData.ratingPlatforms || []),
-            { name: 'Microsoft', rating: 4.7, icon: 'microsoft', color: '#00a4ef', isActive: true }
+            ...(trustData.ratingPlatforms || []).map((p: any) => ({ ...p, desc: p.desc ?? `Based on verified reviews from our alumni on ${p.name}` })),
+            { name: 'Microsoft', rating: 4.7, icon: 'microsoft', color: '#00a4ef', isActive: true, desc: 'Recognized for excellence in tech education' },
           ]
         });
       }
@@ -108,20 +165,22 @@ const Home = () => {
     </div>
   );
 
-  const courseIcons = ['💻','📊','🔒','☁️','📢','🎨'];
+  const courseIcons  = ['💻','📊','🔒','☁️','📢','🎨'];
   const courseColors = ['#d4eae4','#fef9c3','#fce7f3','#d4eae4','#fef3c7','#f3e8ff'];
-  const companies = ['Zoho','HTC','FreshWorks','Kissflow','Infoview','Indium','Aspire','Ramco','intellect','Saksoft','Waycool','Payoda','Prodapt','Bahwan Cybertek','Gofrugal','TVS NEXT','ContusTech','Ideas IT','cavinkare','Gofrugal','Data Patterns','Chargebee','Visteon','KaarTech'];
+  const companies    = ['Zoho','HTC','FreshWorks','Kissflow','Infoview','Indium','Aspire','Ramco','intellect','Saksoft','Waycool','Payoda','Prodapt','Bahwan Cybertek','Gofrugal','TVS NEXT','ContusTech','Ideas IT','cavinkare','Gofrugal','Data Patterns','Chargebee','Visteon','KaarTech'];
 
   return (
     <div style={{ fontFamily: 'system-ui, sans-serif', background: '#ffffff', color: '#0f172a' }}>
 
       {/* ── ANNOUNCEMENT BAR ── */}
-      <div style={{ background: '#1e3a35', padding: '8px 16px', textAlign: 'center' }}>
-        <span style={{ color: 'white', fontSize: '12px', fontWeight: 600, letterSpacing: '0.3px' }}>
+      <div style={{ background: '#c9953a', padding: '10px 16px', textAlign: 'center' }}>
+        <span style={{ color: 'black', fontSize: '23px', fontWeight: 900, letterSpacing: '0.3px' }}>
           🎓 New Batch Starting &nbsp;
-          <span style={{ background: 'rgba(255,255,255,0.2)', padding: '2px 10px', borderRadius: '20px', fontWeight: 700 }}>April 10, 2026</span>
+          <span style={{ background: 'rgba(255,255,255,0.25)', padding: '2px 12px', borderRadius: '20px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.4)' }}>
+            April 10, 2026
+          </span>
           &nbsp; — Limited Seats! &nbsp;
-          <Link to="/contact" style={{ color: 'white', textDecoration: 'underline', fontWeight: 700 }}>Enroll Now →</Link>
+          <Link to="/contact" style={{ color: 'white', textDecoration: 'underline', fontWeight: 800 }}>Enroll Now →</Link>
         </span>
       </div>
 
@@ -129,12 +188,7 @@ const Home = () => {
       <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '90vh' }}>
 
         {/* LEFT */}
-        <div style={{
-          background: '#1e3a35',
-          padding: '60px 48px',
-          display: 'flex', flexDirection: 'column', justifyContent: 'center',
-          position: 'relative', overflow: 'hidden'
-        }}>
+        <div style={{ background: '#1e3a35', padding: '24px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: -100, right: -100, width: 300, height: 300, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.06)' }} />
           <div style={{ position: 'absolute', bottom: -80, left: -80, width: 240, height: 240, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.04)' }} />
 
@@ -181,8 +235,6 @@ const Home = () => {
 
         {/* RIGHT */}
         <div style={{ background: '#f0f7f5', padding: '48px 40px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 20, borderLeft: '4px solid #1e3a35' }}>
-
-          {/* Free Demo Booking Card */}
           <p style={{ fontSize: 18, fontWeight: 700, color: '#94a3b8', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: 4 }}>Book Free Demo</p>
           <div style={{ background: 'white', borderRadius: 14, padding: '20px 22px', border: '1px solid #a7c4bc', boxShadow: '0 2px 12px rgba(30,58,53,0.06)' }}>
             <p style={{ fontWeight: 700, color: '#0f172a', fontSize: 15, marginBottom: 14 }}>Pick a Time Slot</p>
@@ -190,32 +242,16 @@ const Home = () => {
               {['🌅 Morning\n9AM - 12PM', '☀️ Afternoon\n12PM - 3PM', '🌆 Evening\n5PM - 8PM', '📅 Weekend\nSpecial Batch'].map((slot, i) => {
                 const [emoji, time] = slot.split('\n');
                 return (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedSlot(slot)}
-                    style={{
-                      padding: '10px 8px',
-                      borderRadius: 10,
-                      border: selectedSlot === slot ? '2px solid #1e3a35' : '1.5px solid #d4eae4',
-                      background: selectedSlot === slot ? '#1e3a35' : '#f0f7f5',
-                      color: selectedSlot === slot ? 'white' : '#1e3a35',
-                      fontWeight: 700,
-                      fontSize: 13,
-                      cursor: 'pointer',
-                      textAlign: 'center',
-                      transition: 'all 0.2s',
-                    }}
-                  >
+                  <button key={i} onClick={() => setSelectedSlot(slot)}
+                    style={{ padding: '10px 8px', borderRadius: 10, border: selectedSlot === slot ? '2px solid #1e3a35' : '1.5px solid #d4eae4', background: selectedSlot === slot ? '#1e3a35' : '#f0f7f5', color: selectedSlot === slot ? 'white' : '#1e3a35', fontWeight: 700, fontSize: 13, cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s' }}>
                     <div>{emoji}</div>
                     <div style={{ fontSize: 11, marginTop: 2, opacity: 0.85 }}>{time}</div>
                   </button>
                 );
               })}
             </div>
-            <button
-              onClick={() => setIsEnquiryOpen(true)}
-              style={{ width: '100%', background: '#1e3a35', color: 'white', border: 'none', padding: '11px', borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
-            >
+            <button onClick={() => setIsEnquiryOpen(true)}
+              style={{ width: '100%', background: '#1e3a35', color: 'white', border: 'none', padding: '11px', borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
               Book My Free Demo →
             </button>
           </div>
@@ -224,12 +260,10 @@ const Home = () => {
           <div style={{ background: 'white', borderRadius: 14, padding: '20px 22px', border: '1px solid #a7c4bc', boxShadow: '0 2px 12px rgba(30,58,53,0.06)' }}>
             <p style={{ fontWeight: 700, color: '#0f172a', fontSize: 17, marginBottom: 16 }}>Get a Free Callback Today</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <input value={enquiryName} onChange={e => setEnquiryName(e.target.value)}
-                placeholder="Your Full Name"
+              <input value={enquiryName} onChange={e => setEnquiryName(e.target.value)} placeholder="Your Full Name"
                 style={{ border: '1.5px solid #d4eae4', background: '#f0f7f5', borderRadius: 8, padding: '10px 14px', fontSize: 17, width: '100%', outline: 'none', color: '#0f172a', boxSizing: 'border-box' }} />
               <div style={{ display: 'flex', gap: 8 }}>
-                <input value={enquiryPhone} onChange={e => setEnquiryPhone(e.target.value)}
-                  placeholder="Phone Number"
+                <input value={enquiryPhone} onChange={e => setEnquiryPhone(e.target.value)} placeholder="Phone Number"
                   style={{ flex: 1, border: '1.5px solid #d4eae4', background: '#f0f7f5', borderRadius: 8, padding: '10px 14px', fontSize: 17, outline: 'none', color: '#0f172a', minWidth: 0 }} />
                 <Link to={`/contact?name=${encodeURIComponent(enquiryName)}&phone=${encodeURIComponent(enquiryPhone)}`}>
                   <button style={{ background: '#1e3a35', color: 'white', border: 'none', padding: '10px 18px', borderRadius: 8, fontSize: 17, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}>
@@ -287,51 +321,38 @@ const Home = () => {
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40, flexWrap: 'wrap', gap: 16 }}>
             <div>
-              <p style={{ fontSize: 17, fontWeight: 700, color: '#1e3a35', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: 6 }}>What We Offer</p>
+              <p style={{ fontSize: 20, fontWeight: 900, color: '#1e3a35', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: 6 }}>What We Offer</p>
               <h2 style={{ fontSize: 40, fontWeight: 900, color: '#0f172a', letterSpacing: '-1px', margin: 0 }}>Our Courses</h2>
               <p style={{ fontSize: 25, color: '#64748b', marginTop: 6 }}>#1 IT & Non-IT Training Institute in Anna Nagar, Chennai</p>
             </div>
           </div>
-
           {featuredCourses.length > 0 ? (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
               {featuredCourses.slice(0, 6).map((course, i) => (
                 <div key={course._id} style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 16, padding: '22px 20px', position: 'relative', overflow: 'hidden', transition: 'all 0.2s', cursor: 'pointer' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#1e3a35'; (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 24px rgba(30,58,53,0.1)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-3px)'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#e2e8f0'; (e.currentTarget as HTMLDivElement).style.boxShadow = 'none'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; }}>
-
-                  {/* Course number */}
                   <span style={{ position: 'absolute', top: 14, right: 18, fontSize: 40, fontWeight: 900, color: '#f0f7f5', lineHeight: 1, userSelect: 'none' }}>
                     {String(i + 1).padStart(2, '0')}
                   </span>
-
-                  {/* Icon */}
                   <div style={{ width: 44, height: 44, borderRadius: 12, background: courseColors[i] || '#d4eae4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, marginBottom: 14 }}>
                     {courseIcons[i] || '📚'}
                   </div>
-
-                  {/* Title */}
                   <h4 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: '0 0 6px' }}
                     dangerouslySetInnerHTML={{ __html: sanitizeHtml(course.title) }} />
-
-                  {/* Description — 2 lines max */}
                   <p style={{ fontSize: 18, color: '#64748b', lineHeight: 1.6, margin: '0 0 16px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
                     dangerouslySetInnerHTML={{ __html: sanitizeHtml(course.shortDescription || course.description) }} />
-
-                  {/* Arrow link only — no level/duration badges */}
                   <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                     <Link to={`/courses/${course.slug}`}>
                       <span style={{ fontSize: 18, fontWeight: 700, color: '#1e3a35' }}>→</span>
                     </Link>
                   </div>
-
                 </div>
               ))}
             </div>
           ) : (
             <div style={{ textAlign: 'center', padding: '48px 0', color: '#94a3b8' }}>Loading courses...</div>
           )}
-
           <div style={{ textAlign: 'center', marginTop: 40 }}>
             <Link to="/courses">
               <button style={{ background: '#1e3a35', color: 'white', border: 'none', padding: '12px 32px', borderRadius: 8, fontSize: 18, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
@@ -347,7 +368,7 @@ const Home = () => {
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, alignItems: 'center' }}>
             <div>
-              <p style={{ fontSize: 17, fontWeight: 700, color: '#1e3a35', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: 10 }}>Why Choose us</p>
+              <p style={{ fontSize: 20, fontWeight: 900, color: '#1e3a35', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: 10 }}>Why Choose us</p>
               <h2 style={{ fontSize: 40, fontWeight: 900, color: '#0f172a', letterSpacing: '-1px', marginBottom: 16 }}>
                 Not Just Training.<br /><span style={{ color: '#1e3a35' }}>Transformation.</span>
               </h2>
@@ -363,9 +384,9 @@ const Home = () => {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
               {[
                 { icon: '🎯', title: '100% Job-Oriented Teaching', desc: 'Every module mapped to real job descriptions and interview patterns from top companies.' },
-                { icon: '🏭', title: 'Industry Relevant Projects', desc: 'Work on real industry projects and build an impressive portfolio for interviews.' },
-                { icon: '👨‍💼', title: 'Expert Trainers', desc: 'Learn from professionals with 10+ years of hands-on MNC experience.' },
-                { icon: '🚀', title: 'Placement Support', desc: 'Mock interviews, resume building, and 100+ hiring partners to land your dream job.' },
+                { icon: '🏭', title: 'Industry Relevant Projects',  desc: 'Work on real industry projects and build an impressive portfolio for interviews.' },
+                { icon: '👨‍💼', title: 'Expert Trainers',             desc: 'Learn from professionals with 10+ years of hands-on MNC experience.' },
+                { icon: '🚀', title: 'Placement Support',           desc: 'Mock interviews, resume building, and 100+ hiring partners to land your dream job.' },
               ].map((feat, i) => (
                 <div key={i} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 14, padding: '20px 18px', transition: 'all 0.2s' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#1e3a35'; (e.currentTarget as HTMLDivElement).style.transform = 'translateX(4px)'; }}
@@ -383,23 +404,13 @@ const Home = () => {
       {/* ── TRUST ── */}
       <section style={{ padding: '64px 0', background: '#ffffff' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
-          <p style={{ fontSize: 2, fontWeight: 700, color: '#1e3a35', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: 8 }}>Trusted By</p>
+          <p style={{ fontSize: 20, fontWeight: 900, color: '#1e3a35', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: 8 }}>Trusted By</p>
           <h2 style={{ fontSize: 34, fontWeight: 900, color: '#0f172a', letterSpacing: '-1px', marginBottom: 40 }}>
             Trusted by <span style={{ color: '#1e3a35' }}>{trustStats.studentCount}</span> {trustStats.studentLabel}
           </h2>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 20, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 24, flexWrap: 'wrap' }}>
             {trustStats.ratingPlatforms.filter(p => p.isActive).map((platform, i) => (
-              <div key={i} style={{ background: 'white', border: '1.5px solid #e2e8f0', borderRadius: 16, padding: '32px 48px', display: 'flex', flexDirection: 'column', alignItems: 'center', boxShadow: '0 2px 12px rgba(0,0,0,0.04)' }}>
-                <div style={{ fontSize: 44, fontWeight: 900, color: '#1e3a35', marginBottom: 4 }}>{platform.rating.toFixed(1)}</div>
-                <div style={{ fontSize: 18, color: '#94a3b8', marginBottom: 10 }}>Ratings on</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                  <Star size={18} style={{ color: platform.color }} />
-                  <span style={{ fontWeight: 700, fontSize: 18, color: '#0f172a' }}>{platform.name}</span>
-                </div>
-                <div style={{ display: 'flex', gap: 3 }}>
-                  {[...Array(5)].map((_, si) => <Star key={si} size={12} style={{ color: '#facc15', fill: '#facc15' }} />)}
-                </div>
-              </div>
+              <FlipRatingCard key={i} platform={platform} />
             ))}
           </div>
         </div>
@@ -409,7 +420,6 @@ const Home = () => {
       <section style={{ padding: '64px 0', background: '#f0f7f5' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
           <div style={{ textAlign: 'center', marginBottom: 40 }}>
-            <p style={{ fontSize: 25, fontWeight: 700, color: '#1e3a35', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: 8 }}>Student Success</p>
             <h2 style={{ fontSize: 45, fontWeight: 900, color: '#0f172a', letterSpacing: '-1px', margin: 0 }}>Student Testimonials</h2>
             <p style={{ fontSize: 23, color: '#64748b', marginTop: 8 }}>Hear from our successful students</p>
           </div>
@@ -440,8 +450,8 @@ const Home = () => {
 
       {/* ── CTA ── */}
       <section style={{ padding: '64px 0', background: '#2a5048' }}>
-        <div style={{ maxWidth: 800, margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
-          <p style={{ fontSize: 25, fontWeight: 700, color: 'rgba(255,255,255,0.6)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: 12 }}>Get Started Today</p>
+        <div style={{ maxWidth: '70%', margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
+          <p style={{ fontSize: 25, fontWeight: 700, color: 'rgba(255,255,255,0.6)', letterSpacing: '2.5px', textTransform: 'uppercase', marginBottom: 12, textAlign: 'center' }}>Get Started Today</p>
           <h2 style={{ fontSize: 40, fontWeight: 900, color: 'white', letterSpacing: '-1.5px', marginBottom: 16 }}
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(homeContent.callToAction.title) }} />
           <p style={{ fontSize: 20, color: 'rgba(255,255,255,0.7)', lineHeight: 1.8, marginBottom: 32 }}>
@@ -460,7 +470,7 @@ const Home = () => {
             </Link>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px 28px' }}>
-            {['Free Demo Class','Weekdays & Weekend Batches','100% Placement Assistance','No Cost EMI','Industry Certification'].map(pt => (
+            {['Free Demo Class','Weekdays & Weekend Batches','100% Placement Assistance','No Cost EMI','On India Recorganized Certificate'].map(pt => (
               <span key={pt} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 18, color: 'rgba(255,255,255,0.65)', fontWeight: 500 }}>
                 <CheckCircle size={13} style={{ color: 'white' }} /> {pt}
               </span>

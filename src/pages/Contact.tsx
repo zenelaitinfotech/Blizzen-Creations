@@ -279,31 +279,17 @@ if (loading) {
                         />
                       </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="course" className="text-sm sm:text-base font-medium">Course Interested In *</Label>
-                        <Select value={formData.course} onValueChange={(value) => handleChange("course", value)} required>
-                          <SelectTrigger className="text-sm sm:text-base h-10 sm:h-11">
-                            <SelectValue placeholder="Select a course" />
-                          </SelectTrigger>
-       <SelectContent>
-  <SelectItem value="python" className="text-sm sm:text-base">Python Full Stack Development</SelectItem>
-  <SelectItem value="web" className="text-sm sm:text-base">Web Development</SelectItem>
-  <SelectItem value="ai" className="text-sm sm:text-base">AI & Machine Learning</SelectItem>
-  <SelectItem value="data" className="text-sm sm:text-base">Data Science & Analytics</SelectItem>
-  <SelectItem value="cloud" className="text-sm sm:text-base">Cloud Computing & DevOps</SelectItem>
-  <SelectItem value="security" className="text-sm sm:text-base">Cybersecurity</SelectItem>
-  <SelectItem value="design" className="text-sm sm:text-base">UI/UX Design</SelectItem>
-  <SelectItem value="marketing" className="text-sm sm:text-base">Digital Marketing</SelectItem>
-  <SelectItem value="java" className="text-sm sm:text-base">Java Full Stack Development</SelectItem>
-  <SelectItem value="mern" className="text-sm sm:text-base">MERN Stack Development</SelectItem>
-  <SelectItem value="mean" className="text-sm sm:text-base">MEAN Stack Development</SelectItem>
-  <SelectItem value="dotnet" className="text-sm sm:text-base">Dot Net Development</SelectItem>
-  <SelectItem value="mobile" className="text-sm sm:text-base">Mobile App Development</SelectItem>
-  <SelectItem value="testing" className="text-sm sm:text-base">Software Testing</SelectItem>
-  <SelectItem value="other" className="text-sm sm:text-base">Other</SelectItem>
-</SelectContent>
-                        </Select>
-                      </div>
+    <div className="space-y-2">
+  <Label htmlFor="course" className="text-sm sm:text-base font-medium">Course Interested In *</Label>
+  <Input
+    id="course"
+    placeholder="Type your course name"
+    value={formData.course}
+    onChange={(e) => handleChange("course", e.target.value)}
+    required
+    className="text-sm sm:text-base h-10 sm:h-11"
+  />
+</div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
@@ -330,6 +316,7 @@ if (loading) {
                             <SelectValue placeholder="Select experience" />
                           </SelectTrigger>
                           <SelectContent>
+                            <SelectItem value="college-student" className="text-sm sm:text-base">College Student</SelectItem>
                             <SelectItem value="fresher" className="text-sm sm:text-base">Fresher</SelectItem>
                             <SelectItem value="0-1" className="text-sm sm:text-base">0-1 Year</SelectItem>
                             <SelectItem value="1-3" className="text-sm sm:text-base">1-3 Years</SelectItem>

@@ -142,18 +142,40 @@ const Placement = () => {
 
             {/* right — quick trust points from manager content */}
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {[
-                { icon: "🎯", label: "Skill-based training aligned to real industry needs" },
-                { icon: "🏗️", label: "Real-time project experience — not just theory" },
-                { icon: "🎤", label: "Mock interviews & HR sessions with experts" },
-                { icon: "📄", label: "Resume & portfolio building support included" },
-                { icon: "🤝", label: "Direct interview opportunities with hiring partners" },
-              ].map((pt, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "14px 18px" }}>
-                  <span style={{ fontSize: 25, flexShrink: 0 }}>{pt.icon}</span>
-                  <span style={{ fontSize: 17, color: "rgba(255,255,255,0.75)", lineHeight: 1.5 }}>{pt.label}</span>
-                </div>
-              ))}
+{[
+  { icon: "🎯", label: "Skill-based training aligned to real industry needs" },
+  { icon: "🏗️", label: "Real-time project experience — not just theory" },
+  { icon: "🎤", label: "Mock interviews & HR sessions with experts" },
+  { icon: "📄", label: "Resume & portfolio building support included" },
+  { icon: "🤝", label: "Direct interview opportunities with hiring partners" },
+].map((pt, i) => (
+  <div
+    key={i}
+    style={{ display: "flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "14px 18px", transition: "all 0.25s ease", cursor: "default" }}
+    onMouseEnter={e => {
+      const el = e.currentTarget as HTMLDivElement;
+      el.style.background = "white";
+      el.style.borderColor = "white";
+      el.style.transform = "scale(1.03)";
+      el.style.boxShadow = "0 8px 24px rgba(0,0,0,0.15)";
+      const label = el.querySelector(".pt-label") as HTMLElement;
+      if (label) label.style.color = "#1e3a35";
+    }}
+    onMouseLeave={e => {
+      const el = e.currentTarget as HTMLDivElement;
+      el.style.background = "rgba(255,255,255,0.06)";
+      el.style.borderColor = "rgba(255,255,255,0.1)";
+      el.style.transform = "scale(1)";
+      el.style.boxShadow = "none";
+      const label = el.querySelector(".pt-label") as HTMLElement;
+      if (label) label.style.color = "rgba(255,255,255,0.75)";
+    }}
+  >
+    <span style={{ fontSize: 25, flexShrink: 0 }}>{pt.icon}</span>
+    <span className="pt-label" style={{ fontSize: 17, color: "rgba(255,255,255,0.75)", lineHeight: 1.5, transition: "color 0.25s" }}>{pt.label}</span>
+  </div>
+))}
+              
             </div>
           </div>
         </div>

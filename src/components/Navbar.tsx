@@ -81,12 +81,16 @@ const Navbar = () => {
         </div>
 
         {/* Dropdown Panel */}
-        <div
-          className={`absolute left-4 top-20 w-72 bg-white border border-border rounded-xl shadow-lg overflow-hidden transition-all duration-300 ${
-            isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
-          }`}
-        >
-          <div className="flex flex-col p-4 space-y-2">
+    <div
+  className={`absolute left-4 top-20 w-72 bg-white border border-border rounded-xl shadow-lg transition-all duration-300 ${
+    isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+  }`}
+  style={{ display: isOpen ? "block" : "none" }}
+>
+  <div
+    className="flex flex-col p-4 space-y-2"
+    style={{ maxHeight: "75vh", overflowY: "auto" }}
+  >
 
             {navLinks.map((link: any) => {
               if (link.name === "Courses") {
