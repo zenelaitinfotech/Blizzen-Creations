@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { X, Phone, Mail, User, MessageSquare, Loader2 } from "lucide-react";
+import { API_BASE_URL } from "@/config/api";
 
 interface EnquiryPopupProps {
   isOpen: boolean;
@@ -22,43 +23,40 @@ const EnquiryPopup = ({ isOpen, onClose }: EnquiryPopupProps) => {
     message: ""
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL ||
-        "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/enquiries`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...formData,
+        timestamp: new Date().toISOString(),
+        source: 'Website Popup'
+      })
+    });
 
-      await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          timestamp: new Date().toISOString(),
-          source: 'Website Popup'
-        })
-      });
+    const data = await response.json();
+    if (!data.success) throw new Error(data.message);
 
-      toast({
-        title: "Enquiry Submitted!",
-        description: "Thank you for your interest. We'll contact you soon."
-      });
+    toast({
+      title: "Enquiry Submitted!",
+      description: "Thank you for your interest. We'll contact you soon."
+    });
+    setFormData({ name: "", email: "", phone: "", course: "", message: "" });
+    setTimeout(() => { onClose(); }, 2000);
 
-      setFormData({ name: "", email: "", phone: "", course: "", message: "" });
-      setTimeout(() => { onClose(); }, 2000);
-
-    } catch (error) {
-      console.error('Enquiry submission error:', error);
-      toast({
-        title: "Submission Failed",
-        description: "Please try again or contact us directly.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (error: any) {
+    toast({
+      title: "Submission Failed",
+      description: error.message || "Please try again.",
+      variant: "destructive"
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -140,23 +138,14 @@ const EnquiryPopup = ({ isOpen, onClose }: EnquiryPopupProps) => {
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Course of Interest</label>
-              <select
-                value={formData.course}
-                onChange={(e) => handleInputChange('course', e.target.value)}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background"
-              >
-                <option value="">Select a course</option>
-                <option value="Python Full Stack Development">Python Full Stack Development</option>
-                <option value="Data Analytics">Data Analytics</option>
-                <option value="Digital Marketing">Digital Marketing</option>
-                <option value="Web Development">Web Development</option>
-                <option value="AI & Machine Learning">AI & Machine Learning</option>
-                <option value="UI/UX Design">UI/UX Design</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
+        <div className="space-y-2">
+  <label className="text-sm font-medium">Course of Interest</label>
+  <Input
+    placeholder="Enter course name"
+    value={formData.course}
+    onChange={(e) => handleInputChange('course', e.target.value)}
+  />
+</div>
 
             <div className="space-y-2">
               <div className="flex items-center gap-2">
