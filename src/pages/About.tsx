@@ -116,7 +116,7 @@ const About = () => {
           <p style={{ fontSize: 45, fontWeight: 700, color: "#1e3a35", letterSpacing: "2.5px", textTransform: "uppercase", marginBottom: 12, textAlign: "center" }}>Who We Are</p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "start" }}>
             <div>
-              <h2 style={{ fontSize: 46, fontWeight: 900, color: "#0f172a", letterSpacing: "-1.5px", marginBottom: 20, lineHeight: 1.1, marginTop: 90 }}>
+              <h2 style={{ fontSize: 46, fontWeight: 900, color: "#0f172a", letterSpacing: "-1.5px", marginBottom: 20, lineHeight: 1.1, marginTop: 180 }}>
                 Chennai's Premier IT & Non-IT Training Institute
               </h2>
             </div>
