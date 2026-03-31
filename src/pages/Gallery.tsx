@@ -216,13 +216,13 @@ const Gallery = () => {
       <section style={{ padding: "64px 0", background: "#ffffff", borderTop: "1px solid #e2e8f0" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 32px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
           <div>
-            <h3 style={{ fontSize: 24, fontWeight: 700, color: "#0f172a", letterSpacing: "-0.5px", marginBottom: 6 }}>Want to be part of our story?</h3>
-            <p style={{ fontSize: 14, color: "#64748b", margin: 0 }}>Book a free demo class and start your journey with us.</p>
+            <h3 style={{ fontSize: 30, fontWeight: 700, color: "#0f172a", letterSpacing: "-0.5px", marginBottom: 6 }}>Want to be part of our story?</h3>
+            <p style={{ fontSize: 20, color: "#64748b", margin: 0 }}>Book a free demo class and start your journey with us.</p>
           </div>
           <div style={{ display: "flex", gap: 12 }}>
             <Link to="/contact">
               <button
-                style={{ background: "#1e3a35", color: "white", border: "none", padding: "13px 28px", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8 }}
+                style={{ background: "#1e3a35", color: "white", border: "none", padding: "13px 28px", borderRadius: 8, fontSize: 16, fontWeight: 900, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8 }}
                 onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = "#c9953a")}
                 onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = "#1e3a35")}
               >
@@ -230,7 +230,7 @@ const Gallery = () => {
               </button>
             </Link>
             <Link to="/courses">
-              <button style={{ background: "transparent", color: "#1e3a35", border: "1.5px solid #a7c4bc", padding: "13px 28px", borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+              <button style={{ background: "transparent", color: "#1e3a35", border: "1.5px solid #a7c4bc", padding: "13px 28px", borderRadius: 8, fontSize: 16, fontWeight: 900, cursor: "pointer" }}>
                 Browse Courses
               </button>
             </Link>

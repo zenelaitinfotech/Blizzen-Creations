@@ -19,30 +19,21 @@ const enquirySchema = new mongoose.Schema(
       required: [true, 'Phone number is required'],
       match: [/^[\d\s\-\+\(\)]{7,}$/, 'Please provide a valid phone number']
     },
-    course: {
-      type: String,
-      required: [true, 'Course selection is required'],
-      enum: [
-        'python',
-        'web',
-        'ai',
-        'data',
-        'cloud',
-        'security',
-        'design',
-        'marketing'
-      ]
-    },
+course: {
+  type: String,
+  required: [true, 'Course selection is required'],
+  trim: true
+},
     qualification: {
       type: String,
       enum: ['10th', '12th', 'diploma', 'graduate', 'postgraduate', ''],
       default: ''
     },
-    experience: {
-      type: String,
-      enum: ['fresher', '0-1', '1-3', '3-5', '5+', ''],
-      default: ''
-    },
+ experience: {
+  type: String,
+  enum: ['college-student', 'fresher', '0-1', '1-3', '3-5', '5+', ''],
+  default: ''
+},
     placementRequired: {
       type: String,
       enum: ['yes', 'no', 'maybe', ''],
