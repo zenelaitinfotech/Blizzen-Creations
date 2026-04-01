@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: blizzen-creations-2
+    name: Blizzen-Creations-2
     env: static
-    buildCommand: npm install; npm run build
-    staticPublishPath: dist
+    buildCommand: npm install && VITE_API_URL=https://blizzen-creations-1.onrender.com npm run build
+    staticPublishPath: ./dist
     routes:
       - type: rewrite
         source: /*
