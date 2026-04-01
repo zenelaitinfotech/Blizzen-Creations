@@ -20,7 +20,7 @@
     "seed:trust-stats": "node server/seeds/trust-stats-seed.js",
     "seed:all": "npm run seed:courses:v2 && npm run seed:simple-placements && npm run seed:placement-stats && npm run seed:contact && npm run seed:about && npm run seed:home && npm run seed:trust-stats",
     "test:endpoints": "node server/test-endpoints.js",
-    "build": "vite build",
+  "build": "vite build && node -e \"require('fs').copyFileSync('public/_redirects', 'dist/_redirects')\"",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "preview:all": "concurrently \"npm run server\" \"npm run preview\"",
