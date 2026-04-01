@@ -1,5 +1,5 @@
 services:
-  - type: web
+  - type: static
     name: Blizzen-Creations-2
     env: static
     buildCommand: npm install && VITE_API_URL=https://blizzen-creations-1.onrender.com npm run build
