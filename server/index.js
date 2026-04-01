@@ -44,6 +44,7 @@ app.use(
       "http://localhost:8081",
       "https://blizzen-creations-git-main-zenelaits-projects.vercel.app",
       "https://blizzen-creations-ec552rl3u-zenelaits-projects.vercel.app",
+        "https://blizzen-creations-2.onrender.com",
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
