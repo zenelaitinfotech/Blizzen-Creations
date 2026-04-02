@@ -7,6 +7,17 @@ import { Calendar, User, ArrowRight, Loader2, ChevronLeft, ChevronRight } from "
 import { apiService } from "@/services/api";
 import { sanitizeHtml } from "@/lib/html-sanitizer";
 
+// ── Mobile hook ──
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return isMobile;
+}
+
 interface BlogPost {
   _id: string;
   title: string;
@@ -21,6 +32,7 @@ interface BlogPost {
 }
 
 const Blog = () => {
+  const isMobile = useIsMobile();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -32,7 +44,6 @@ const Blog = () => {
   }, [selectedCategory]);
 
   useEffect(() => {
-    // Reset to page 1 when category changes
     setCurrentPage(1);
   }, [selectedCategory]);
 
@@ -52,11 +63,10 @@ const Blog = () => {
 
   const categories = ["all", ...Array.from(new Set(posts.map(post => post.category)))];
 
-  const filteredPosts = selectedCategory === "all" 
-    ? posts 
+  const filteredPosts = selectedCategory === "all"
+    ? posts
     : posts.filter(post => post.category === selectedCategory);
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
@@ -64,14 +74,14 @@ const Blog = () => {
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -85,23 +95,43 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen pt-20">
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-b from-primary/5 to-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12 animate-fade-in">
-            <h1 className="text-5xl font-bold mb-6">Our Blog</h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+
+      {/* ── Hero Section ── */}
+      <section
+        className="py-20 bg-gradient-to-b from-primary/5 to-background"
+        style={{ padding: isMobile ? "40px 0 28px" : undefined }}
+      >
+        <div className="container mx-auto px-4" style={{ padding: isMobile ? "0 16px" : undefined }}>
+          <div className="text-center mb-12 animate-fade-in" style={{ marginBottom: isMobile ? 24 : undefined }}>
+            <h1
+              className="font-bold mb-6"
+              style={{ fontSize: isMobile ? 32 : undefined, marginBottom: isMobile ? 12 : undefined }}
+            >
+              Our Blog
+            </h1>
+            <p
+              className="text-muted-foreground mx-auto"
+              style={{ fontSize: isMobile ? 15 : undefined, maxWidth: isMobile ? "100%" : "48rem" }}
+            >
               Stay updated with the latest trends, tips, and insights in technology and career development
             </p>
           </div>
 
           {/* Category Filter */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
+          <div
+            className="flex flex-wrap justify-center gap-3 mb-12"
+            style={{ gap: isMobile ? 8 : undefined, marginBottom: isMobile ? 0 : undefined }}
+          >
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-2 rounded-full transition-all ${
+                style={{
+                  padding: isMobile ? "6px 16px" : "8px 24px",
+                  fontSize: isMobile ? 13 : undefined,
+                  borderRadius: 999,
+                }}
+                className={`transition-all ${
                   selectedCategory === category
                     ? "bg-primary text-white"
                     : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -114,9 +144,9 @@ const Blog = () => {
         </div>
       </section>
 
-      {/* Blog Posts Grid */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
+      {/* ── Blog Posts Grid ── */}
+      <section style={{ padding: isMobile ? "32px 0" : undefined }} className="py-20">
+        <div className="container mx-auto px-4" style={{ padding: isMobile ? "0 16px" : undefined }}>
           {filteredPosts.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-muted-foreground text-lg">No blog posts found.</p>
@@ -124,25 +154,35 @@ const Blog = () => {
           ) : (
             <>
               {/* Results count */}
-              <div className="mb-6 text-muted-foreground">
-                Showing {indexOfFirstPost + 1}-{Math.min(indexOfLastPost, filteredPosts.length)} of {filteredPosts.length} posts
+              <div
+                className="mb-6 text-muted-foreground"
+                style={{ fontSize: isMobile ? 13 : undefined, marginBottom: isMobile ? 16 : undefined }}
+              >
+                Showing {indexOfFirstPost + 1}–{Math.min(indexOfLastPost, filteredPosts.length)} of {filteredPosts.length} posts
               </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Grid */}
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: isMobile ? "1fr" : undefined,
+                  gap: isMobile ? 16 : undefined,
+                }}
+                className={isMobile ? "" : "grid md:grid-cols-2 lg:grid-cols-3 gap-8"}
+              >
                 {currentPosts.map((post, index) => (
-                  <Link
-                    key={post._id}
-                    to={`/blog/${post.slug}`}
-                    className="group"
-                  >
-                    <Card 
+                  <Link key={post._id} to={`/blog/${post.slug}`} className="group">
+                    <Card
                       className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-slide-up h-full"
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       {post.image && (
-                        <div className="relative h-48 overflow-hidden">
-                          <img 
-                            src={post.image} 
+                        <div
+                          className="relative overflow-hidden"
+                          style={{ height: isMobile ? 180 : 192 }}
+                        >
+                          <img
+                            src={post.image}
                             alt={post.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
@@ -151,36 +191,54 @@ const Blog = () => {
                           </Badge>
                         </div>
                       )}
-                      <CardHeader>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
+
+                      <CardHeader style={{ padding: isMobile ? "14px 14px 8px" : undefined }}>
+                        <div
+                          className="flex items-center gap-4 text-sm text-muted-foreground mb-3"
+                          style={{
+                            flexDirection: isMobile ? "column" : "row",
+                            alignItems: isMobile ? "flex-start" : "center",
+                            gap: isMobile ? 4 : undefined,
+                            marginBottom: isMobile ? 8 : undefined,
+                          }}
+                        >
                           <div className="flex items-center gap-1">
-                            <Calendar size={14} />
-                            <span>{formatDate(post.publishedAt)}</span>
+                            <Calendar size={13} />
+                            <span style={{ fontSize: isMobile ? 12 : 14 }}>{formatDate(post.publishedAt)}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <User size={14} />
-                            <span>{post.author}</span>
+                            <User size={13} />
+                            <span style={{ fontSize: isMobile ? 12 : 14 }}>{post.author}</span>
                           </div>
                         </div>
-                        <CardTitle 
+                        <CardTitle
                           className="line-clamp-2 group-hover:text-primary transition-colors"
+                          style={{ fontSize: isMobile ? 16 : undefined }}
                           dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.title) }}
                         />
                       </CardHeader>
-                      <CardContent>
-                        <p 
+
+                      <CardContent style={{ padding: isMobile ? "0 14px 14px" : undefined }}>
+                        <p
                           className="text-muted-foreground line-clamp-3 mb-4"
+                          style={{ fontSize: isMobile ? 13 : undefined, marginBottom: isMobile ? 10 : undefined }}
                           dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.excerpt) }}
                         />
-                        <div className="flex flex-wrap gap-2 mb-4">
+                        <div
+                          className="flex flex-wrap gap-2 mb-4"
+                          style={{ gap: isMobile ? 6 : undefined, marginBottom: isMobile ? 10 : undefined }}
+                        >
                           {post.tags.slice(0, 3).map((tag, idx) => (
-                            <Badge key={idx} variant="outline" className="text-xs">
+                            <Badge key={idx} variant="outline" style={{ fontSize: isMobile ? 10 : undefined }}>
                               {tag}
                             </Badge>
                           ))}
                         </div>
-                        <div className="flex items-center text-primary font-medium text-sm">
-                          Read More <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
+                        <div
+                          className="flex items-center text-primary font-medium"
+                          style={{ fontSize: isMobile ? 13 : 14 }}
+                        >
+                          Read More <ArrowRight size={15} className="ml-1 group-hover:translate-x-1 transition-transform" />
                         </div>
                       </CardContent>
                     </Card>
@@ -188,78 +246,88 @@ const Blog = () => {
                 ))}
               </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-12 flex flex-col items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
+              {/* ── Pagination ── */}
+              {totalPages > 1 && (
+                <div className="mt-12 flex flex-col items-center gap-4" style={{ marginTop: isMobile ? 28 : undefined }}>
+                  <div
+                    className="flex items-center gap-2"
+                    style={{ gap: isMobile ? 6 : undefined, flexWrap: isMobile ? "wrap" : "nowrap", justifyContent: "center" }}
                   >
-                    <ChevronLeft className="w-4 h-4 mr-1" />
-                    Previous
-                  </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      style={{ fontSize: isMobile ? 13 : undefined }}
+                    >
+                      <ChevronLeft className="w-4 h-4 mr-1" />
+                      {!isMobile && "Previous"}
+                    </Button>
 
-                  {/* Page Numbers */}
-                  <div className="flex gap-2">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
-                      // Show first page, last page, current page, and pages around current
-                      const showPage = 
-                        pageNum === 1 ||
-                        pageNum === totalPages ||
-                        (pageNum >= currentPage - 1 && pageNum <= currentPage + 1);
+                    <div className="flex gap-2" style={{ gap: isMobile ? 4 : undefined }}>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
+                        const showPage =
+                          pageNum === 1 ||
+                          pageNum === totalPages ||
+                          (pageNum >= currentPage - 1 && pageNum <= currentPage + 1);
 
-                      const showEllipsisBefore = pageNum === currentPage - 2 && currentPage > 3;
-                      const showEllipsisAfter = pageNum === currentPage + 2 && currentPage < totalPages - 2;
+                        const showEllipsisBefore = pageNum === currentPage - 2 && currentPage > 3;
+                        const showEllipsisAfter = pageNum === currentPage + 2 && currentPage < totalPages - 2;
 
-                      if (showEllipsisBefore || showEllipsisAfter) {
+                        if (showEllipsisBefore || showEllipsisAfter) {
+                          return (
+                            <span key={pageNum} className="px-2 py-1 text-muted-foreground">
+                              ...
+                            </span>
+                          );
+                        }
+
+                        if (!showPage) return null;
+
                         return (
-                          <span key={pageNum} className="px-2 py-1 text-muted-foreground">
-                            ...
-                          </span>
+                          <Button
+                            key={pageNum}
+                            variant={currentPage === pageNum ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => handlePageChange(pageNum)}
+                            style={{
+                              minWidth: isMobile ? 32 : 40,
+                              height: isMobile ? 32 : undefined,
+                              padding: isMobile ? "0 8px" : undefined,
+                              fontSize: isMobile ? 13 : undefined,
+                            }}
+                          >
+                            {pageNum}
+                          </Button>
                         );
-                      }
+                      })}
+                    </div>
 
-                      if (!showPage) return null;
-
-                      return (
-                        <Button
-                          key={pageNum}
-                          variant={currentPage === pageNum ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => handlePageChange(pageNum)}
-                          className="min-w-[40px]"
-                        >
-                          {pageNum}
-                        </Button>
-                      );
-                    })}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      style={{ fontSize: isMobile ? 13 : undefined }}
+                    >
+                      {!isMobile && "Next"}
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
                   </div>
 
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
+                  <p
+                    className="text-muted-foreground"
+                    style={{ fontSize: isMobile ? 12 : 14 }}
                   >
-                    Next
-                    <ChevronRight className="w-4 h-4 ml-1" />
-                  </Button>
+                    Page {currentPage} of {totalPages}
+                  </p>
                 </div>
-
-                <p className="text-sm text-muted-foreground">
-                  Page {currentPage} of {totalPages}
-                </p>
-              </div>
-            )}
+              )}
             </>
           )}
         </div>
       </section>
 
-      
     </div>
   );
 };

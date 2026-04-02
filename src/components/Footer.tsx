@@ -62,9 +62,7 @@ const Footer = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [footerContent, setFooterContent] = useState<FooterContent | null>(null);
 
-  useEffect(() => {
-    fetchFooterData();
-  }, []);
+  useEffect(() => { fetchFooterData(); }, []);
 
   const fetchFooterData = async () => {
     try {
@@ -73,7 +71,6 @@ const Footer = () => {
         apiService.getCourses(),
         apiService.getFooterContent(),
       ]);
-
       if (contactData.success) setContactInfo(contactData.data);
       if (coursesData.success) setCourses(coursesData.data.slice(0, 5));
       setFooterContent(footerData);
@@ -84,20 +81,18 @@ const Footer = () => {
 
   const getSocialIcon = (iconName: string) => {
     switch (iconName) {
-      case "Facebook": return Facebook;
+      case "Facebook":  return Facebook;
       case "Instagram": return Instagram;
-      case "Linkedin": return Linkedin;
-      case "Youtube": return Youtube;
-      default: return Facebook;
+      case "Linkedin":  return Linkedin;
+      case "Youtube":   return Youtube;
+      default:          return Facebook;
     }
   };
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   const activeSocialLinks = footerContent?.socialLinks?.filter((l) => l.isActive) ?? [];
-  const activeQuickLinks = footerContent?.quickLinks?.filter((l) => l.isActive) ?? [];
+  const activeQuickLinks  = footerContent?.quickLinks?.filter((l) => l.isActive) ?? [];
 
   const popularCourseList =
     footerContent?.popularCourses && footerContent.popularCourses.length > 0
@@ -106,9 +101,9 @@ const Footer = () => {
       ? courses.map((c) => ({ courseId: c._id, title: c.title, slug: c.slug }))
       : [
           { courseId: "1", title: "Python Full Stack Development", slug: "python-full-stack" },
-          { courseId: "2", title: "Data Science & Analytics", slug: "data-science" },
-          { courseId: "3", title: "AI & Machine Learning", slug: "ai-ml" },
-          { courseId: "4", title: "Web Development", slug: "web-development" },
+          { courseId: "2", title: "Data Science & Analytics",      slug: "data-science" },
+          { courseId: "3", title: "AI & Machine Learning",         slug: "ai-ml" },
+          { courseId: "4", title: "Web Development",               slug: "web-development" },
         ];
 
   const MAP_EMBED_URL = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3886.2140436086565!2d80.21014897484349!3d13.085616887240327!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a526500531a313b%3A0xd55b6f4b2ed37998!2sBlizzen%20Creation%27s!5e0!3m2!1sen!2sin!4v1774497866285!5m2!1sen!2sin";
@@ -122,6 +117,7 @@ const Footer = () => {
 
   return (
     <footer style={{ fontFamily: "'Segoe UI', sans-serif" }}>
+
       {/* ── Main footer body ── */}
       <div style={{ background: "#1e3a35", position: "relative", overflow: "hidden" }}>
 
@@ -133,267 +129,219 @@ const Footer = () => {
           viewBox="0 0 900 400"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <line x1="400" y1="0" x2="900" y2="400" stroke="white" strokeWidth="1" />
-          <line x1="500" y1="0" x2="900" y2="320" stroke="white" strokeWidth="1" />
-          <line x1="600" y1="0" x2="900" y2="240" stroke="white" strokeWidth="1" />
-          <line x1="700" y1="0" x2="900" y2="160" stroke="white" strokeWidth="1" />
-          <line x1="800" y1="0" x2="900" y2="80"  stroke="white" strokeWidth="1" />
-          <line x1="900" y1="0" x2="900" y2="0"   stroke="white" strokeWidth="1" />
-          <line x1="300" y1="0" x2="900" y2="480" stroke="white" strokeWidth="1" />
+          <line x1="400" y1="0"   x2="900" y2="400" stroke="white" strokeWidth="1" />
+          <line x1="500" y1="0"   x2="900" y2="320" stroke="white" strokeWidth="1" />
+          <line x1="600" y1="0"   x2="900" y2="240" stroke="white" strokeWidth="1" />
+          <line x1="700" y1="0"   x2="900" y2="160" stroke="white" strokeWidth="1" />
+          <line x1="800" y1="0"   x2="900" y2="80"  stroke="white" strokeWidth="1" />
+          <line x1="900" y1="0"   x2="900" y2="0"   stroke="white" strokeWidth="1" />
+          <line x1="300" y1="0"   x2="900" y2="480" stroke="white" strokeWidth="1" />
           <line x1="900" y1="100" x2="500" y2="400" stroke="white" strokeWidth="1" />
           <line x1="900" y1="200" x2="600" y2="400" stroke="white" strokeWidth="1" />
           <line x1="900" y1="300" x2="700" y2="400" stroke="white" strokeWidth="1" />
           <line x1="900" y1="350" x2="800" y2="400" stroke="white" strokeWidth="1" />
         </svg>
 
-        <div
-          style={{
-            maxWidth: "1200px",
-            margin: "0 auto",
-            padding: "56px 32px 48px",
-            display: "grid",
-            gridTemplateColumns: "1.2fr 0.8fr 1fr",
-            gap: "48px",
-            position: "relative",
-            zIndex: 1,
-          }}
-          className="footer-grid"
-        >
+        <div className="footer-grid" style={{ maxWidth: "1200px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+
           {/* ── COL 1: Brand block ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            <div style={{ marginBottom: "4px" }}>
-              <img
-                src={logo}
-                alt="Blizzen Creations"
-                style={{ height: "90px", width: "auto", objectFit: "contain" }}
-              />
-            </div>
+          <div className="footer-col-brand" style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <img src={logo} alt="Blizzen Creations" style={{ height: "80px", width: "auto", objectFit: "contain" }} />
 
             <p
-              style={{
-                color: "rgba(255,255,255,0.75)",
-                fontSize: "15px",
-                lineHeight: "1.7",
-                maxWidth: "380px",
-                margin: 0,
-                marginTop: "-8px",
-              }}
+              style={{ color: "rgba(255,255,255,0.75)", fontSize: "14px", lineHeight: "1.7", maxWidth: "380px", margin: 0 }}
               dangerouslySetInnerHTML={{
                 __html: sanitizeHtml(
                   footerContent?.description ||
-                    "Transforming careers through comprehensive IT training, hands-on projects, and guaranteed placement support in Chennai, Tamil Nadu."
+                  "Transforming careers through comprehensive IT training, hands-on projects, and guaranteed placement support in Chennai, Tamil Nadu."
                 ),
               }}
             />
 
-            {/* Social icons including Telegram */}
+            {/* Social icons */}
             {footerContent?.showSocialLinks !== false && (
-              <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-
-                {/* Dynamic social links from admin */}
+              <div className="footer-social" style={{ display: "flex", gap: "14px", alignItems: "center", flexWrap: "wrap" }}>
                 {activeSocialLinks.map((link, i) => {
                   const Icon = getSocialIcon(link.icon);
                   return (
-                    <a
-                      key={i}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={link.name}
+                    <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" aria-label={link.name}
                       style={socialLinkStyle}
-                      onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#fff")}
-                      onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.65)")}
-                    >
-                      <Icon size={26} />
+                      onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = "#fff")}
+                      onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.65)")}>
+                      <Icon size={24} />
                     </a>
                   );
                 })}
-
-                {/* Hardcoded Telegram link */}
-                <a
-                  href="https://t.me/blizzencareeracademy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Telegram"
+                <a href="https://t.me/blizzencareeracademy" target="_blank" rel="noopener noreferrer" aria-label="Telegram"
                   style={socialLinkStyle}
-                  onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#fff")}
-                  onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.65)")}
-                >
+                  onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = "#fff")}
+                  onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.65)")}>
                   <TelegramIcon />
                 </a>
-
               </div>
             )}
 
-            {/* Back to top button */}
-            <div>
-              <button
-                onClick={scrollToTop}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "10px 20px",
-                  border: "1.5px solid rgba(255,255,255,0.45)",
-                  borderRadius: "6px",
-                  background: "transparent",
-                  color: "rgba(255,255,255,0.85)",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                }}
-                onMouseEnter={(e) => {
-                  const btn = e.currentTarget as HTMLButtonElement;
-                  btn.style.background = "rgba(255,255,255,0.1)";
-                  btn.style.borderColor = "rgba(255,255,255,0.8)";
-                }}
-                onMouseLeave={(e) => {
-                  const btn = e.currentTarget as HTMLButtonElement;
-                  btn.style.background = "transparent";
-                  btn.style.borderColor = "rgba(255,255,255,0.45)";
-                }}
-              >
-                <ArrowUp size={14} />
-                Back to top
+            {/* Back to top */}
+            <div className="footer-backtop">
+              <button onClick={scrollToTop}
+                style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "9px 18px", border: "1.5px solid rgba(255,255,255,0.45)", borderRadius: "6px", background: "transparent", color: "rgba(255,255,255,0.85)", fontSize: "13px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", transition: "all 0.2s" }}
+                onMouseEnter={e => { const b = e.currentTarget as HTMLButtonElement; b.style.background = "rgba(255,255,255,0.1)"; b.style.borderColor = "rgba(255,255,255,0.8)"; }}
+                onMouseLeave={e => { const b = e.currentTarget as HTMLButtonElement; b.style.background = "transparent"; b.style.borderColor = "rgba(255,255,255,0.45)"; }}>
+                <ArrowUp size={14} /> Back to top
               </button>
             </div>
           </div>
 
-          {/* ── COL 2: Quick Links ── */}
-          {footerContent?.showQuickLinks !== false && (
-            <div>
-              <h4
-                style={{
-                  color: "#fff",
-                  fontSize: "15px",
-                  fontWeight: 600,
-                  marginBottom: "20px",
-                  marginTop: 0,
-                  letterSpacing: "0.03em",
-                }}
-              >
-                Quick Links
+          {/* ── COL 2 + COL 3 wrapped in a row for mobile ── */}
+          <div className="footer-links-map-row">
+
+            {/* Quick Links */}
+            {footerContent?.showQuickLinks !== false && (
+              <div className="footer-col-links">
+                <h4 style={{ color: "#fff", fontSize: "15px", fontWeight: 600, marginBottom: "18px", marginTop: 0, letterSpacing: "0.03em" }}>
+                  Quick Links
+                </h4>
+                <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "12px" }}>
+                  {(activeQuickLinks.length > 0
+                    ? activeQuickLinks
+                    : [
+                        { label: "Home",        path: "/" },
+                        { label: "About Us",    path: "/about" },
+                        { label: "Courses",     path: "/courses" },
+                        { label: "Placements",  path: "/placements" },
+                        { label: "Contact Us",  path: "/contact" },
+                      ]
+                  ).map((link, i) => (
+                    <li key={i}>
+                      <Link to={link.path}
+                        style={{ color: "rgba(255,255,255,0.65)", fontSize: "14px", textDecoration: "none", transition: "color 0.2s" }}
+                        onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = "#fff")}
+                        onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.65)")}>
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Map + Developed by */}
+            <div className="footer-col-map" style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              <h4 style={{ color: "#fff", fontSize: "15px", fontWeight: 600, marginBottom: "4px", marginTop: 0, letterSpacing: "0.03em" }}>
+                Our Location
               </h4>
-              <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "12px" }}>
-                {(activeQuickLinks.length > 0
-                  ? activeQuickLinks
-                  : [
-                      { label: "Home", path: "/" },
-                      { label: "About Us", path: "/about" },
-                      { label: "Courses", path: "/courses" },
-                      { label: "Placements", path: "/placements" },
-                      { label: "Contact Us", path: "/contact" },
-                    ]
-                ).map((link, i) => (
-                  <li key={i}>
-                    <Link
-                      to={link.path}
-                      style={{
-                        color: "rgba(255,255,255,0.65)",
-                        fontSize: "14px",
-                        textDecoration: "none",
-                        transition: "color 0.2s",
-                      }}
-                      onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#fff")}
-                      onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "rgba(255,255,255,0.65)")}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* ── COL 3: Live Location Map + Developed by ── */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            <h4
-              style={{
-                color: "#fff",
-                fontSize: "15px",
-                fontWeight: 600,
-                marginBottom: "4px",
-                marginTop: 0,
-                letterSpacing: "0.03em",
-              }}
-            >
-              Our Location
-            </h4>
-
-            <div
-              style={{
-                borderRadius: "8px",
-                overflow: "hidden",
-                border: "1.5px solid rgba(255,255,255,0.15)",
-                flexShrink: 0,
-              }}
-            >
-              <iframe
-                title="Blizzen Creations Location"
-                src={MAP_EMBED_URL}
-                width="100%"
-                height="160"
-                style={{ display: "block", border: "none" }}
-                loading="lazy"
-                allowFullScreen
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "4px" }}>
-              <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px" }}>Developed by</span>
-              <div
-                style={{
-                  background: "#fff",
-                  borderRadius: "999px",
-                  padding: "3px 10px",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <img src={devLogo} alt="Developer" style={{ height: "30px", width: "auto" }} />
+              <div style={{ borderRadius: "8px", overflow: "hidden", border: "1.5px solid rgba(255,255,255,0.15)" }}>
+                <iframe
+                  title="Blizzen Creations Location"
+                  src={MAP_EMBED_URL}
+                  width="100%"
+                  height="160"
+                  style={{ display: "block", border: "none" }}
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+              <div className="footer-dev-row" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px" }}>Developed by</span>
+                <div style={{ background: "#fff", borderRadius: "999px", padding: "3px 10px", display: "flex", alignItems: "center" }}>
+                  <img src={devLogo} alt="Developer" style={{ height: "28px", width: "auto" }} />
+                </div>
               </div>
             </div>
+
           </div>
+
         </div>
       </div>
 
       {/* ── Copyright bar ── */}
-      <div
-        style={{
-          background: "#c9953a",
-          padding: "14px 32px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexWrap: "wrap",
-          gap: "8px",
-        }}
-      >
+      <div style={{ background: "#c9953a", padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap", gap: "8px" }}>
         <p
           style={{ margin: 0, color: "#fff", fontSize: "13px", textAlign: "center" }}
           dangerouslySetInnerHTML={{
             __html: sanitizeHtml(
               footerContent?.copyright ||
-                `© ${new Date().getFullYear()} ${contactInfo?.companyName || "Blizzen Creations"}. All rights reserved.`
+              `© ${new Date().getFullYear()} ${contactInfo?.companyName || "Blizzen Creations"}. All rights reserved.`
             ),
           }}
         />
       </div>
 
-      {/* Responsive styles */}
       <style>{`
+        /* ── Desktop: 3-col grid, links-map-row is transparent passthrough ── */
+        .footer-grid {
+          padding: 56px 32px 48px;
+          display: grid;
+          grid-template-columns: 1.2fr 0.8fr 1fr;
+          gap: 48px;
+        }
+        .footer-links-map-row {
+          display: contents;
+        }
+
+        /* ── Tablet ── */
         @media (max-width: 900px) {
           .footer-grid {
             grid-template-columns: 1fr 1fr !important;
+            padding: 40px 24px 36px !important;
+            gap: 32px !important;
+          }
+          .footer-links-map-row {
+            display: contents;
           }
         }
+
+        /* ── Mobile only ── */
         @media (max-width: 600px) {
           .footer-grid {
             grid-template-columns: 1fr !important;
+            padding: 32px 16px 28px !important;
+            gap: 20px !important;
+          }
+
+          /* Brand col: logo right, everything else centered */
+          .footer-col-brand {
+            align-items: center !important;
+            text-align: center !important;
+          }
+          .footer-col-brand img {
+            align-self: flex-end !important;
+          }
+          .footer-col-brand p {
+            text-align: center !important;
+            max-width: 100% !important;
+          }
+          .footer-social {
+            justify-content: center !important;
+          }
+          .footer-backtop {
+            display: flex !important;
+            justify-content: center !important;
+          }
+
+          /* Quick links + map side by side */
+          .footer-links-map-row {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 16px !important;
+          }
+
+          /* Shrink map height & add right padding so it clears floating buttons */
+          .footer-col-map iframe {
+            height: 110px !important;
+          }
+          .footer-col-map {
+            padding-right: 6px !important;
+            overflow: hidden !important;
+          }
+
+          /* Developed by: stack vertically so logo doesn't overflow */
+          .footer-dev-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 5px !important;
+            margin-top: 6px !important;
           }
         }
       `}</style>

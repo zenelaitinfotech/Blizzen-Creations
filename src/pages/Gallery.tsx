@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, X, ChevronLeft, ChevronRight } from "lucide-react";
-
 
 // ── Import your actual images ──
 import img1 from "@/assets/image1.jpeg";
@@ -10,6 +9,17 @@ import img3 from "@/assets/image3.jpeg";
 import img4 from "@/assets/image4.jpeg";
 import img5 from "@/assets/IMG1.jpeg";
 
+// ── Mobile hook ──
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return isMobile;
+}
+
 type Category = "All" | "Classroom" | "Events" | "Achievements";
 
 interface GalleryItem {
@@ -17,7 +27,7 @@ interface GalleryItem {
   src: string;
   title: string;
   category: Exclude<Category, "All">;
-  tall?: boolean; // makes card taller in masonry
+  tall?: boolean;
 }
 
 const GALLERY_ITEMS: GalleryItem[] = [
@@ -26,7 +36,6 @@ const GALLERY_ITEMS: GalleryItem[] = [
   { id: 3, src: img3, title: "Placement Drive 2025",      category: "Achievements", tall: false },
   { id: 4, src: img4, title: "Python Bootcamp Workshop",  category: "Classroom",    tall: false },
   { id: 5, src: img5, title: "Student Achievement Award", category: "Achievements", tall: true  },
-  // Duplicate entries to fill the grid — remove once you have more images
   { id: 6, src: img2, title: "Tech Fest 2025",            category: "Events",       tall: false },
   { id: 7, src: img3, title: "Campus Orientation Day",    category: "Events",       tall: true  },
   { id: 8, src: img1, title: "Full Stack Training",       category: "Classroom",    tall: false },
@@ -46,22 +55,36 @@ const CATEGORY_TEXT: Record<Exclude<Category, "All">, string> = {
 };
 
 const Gallery = () => {
+  const isMobile = useIsMobile();
   const [activeFilter, setActiveFilter] = useState<Category>("All");
-  const [lightbox, setLightbox] = useState<number | null>(null); // index in filtered array
+  const [lightbox, setLightbox] = useState<number | null>(null);
 
   const filtered = activeFilter === "All"
     ? GALLERY_ITEMS
     : GALLERY_ITEMS.filter(item => item.category === activeFilter);
 
-  const openLightbox = (index: number) => setLightbox(index);
+  const openLightbox  = (index: number) => setLightbox(index);
   const closeLightbox = () => setLightbox(null);
   const prevImage = () => setLightbox(i => i !== null ? (i - 1 + filtered.length) % filtered.length : null);
   const nextImage = () => setLightbox(i => i !== null ? (i + 1) % filtered.length : null);
 
-  // Split into 3 columns for masonry
-  const col1 = filtered.filter((_, i) => i % 3 === 0);
-  const col2 = filtered.filter((_, i) => i % 3 === 1);
-  const col3 = filtered.filter((_, i) => i % 3 === 2);
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (lightbox === null) return;
+      if (e.key === "ArrowLeft")  prevImage();
+      if (e.key === "ArrowRight") nextImage();
+      if (e.key === "Escape")     closeLightbox();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [lightbox, filtered.length]);
+
+  // On mobile: 2 columns; on desktop: 3 columns
+  const numCols = isMobile ? 2 : 3;
+  const cols = Array.from({ length: numCols }, (_, ci) =>
+    filtered.filter((_, i) => i % numCols === ci)
+  );
 
   const getFilteredIndex = (item: GalleryItem) => filtered.findIndex(f => f.id === item.id);
 
@@ -69,46 +92,51 @@ const Gallery = () => {
     <div style={{ fontFamily: "'Segoe UI', sans-serif", background: "#ffffff", color: "#0f172a" }}>
 
       {/* ── HERO ── */}
-      <section style={{ background: "#1e3a35", padding: "60px 0 64px", position: "relative", overflow: "hidden" }}>
-        <div style={{
-          position: "absolute", inset: 0,
-       
-          backgroundSize: "cover", backgroundPosition: "center",
-          opacity: 0.6, pointerEvents: "none", zIndex: 0,
-        }} />
+      <section style={{ background: "#1e3a35", padding: isMobile ? "40px 0 44px" : "60px 0 64px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundSize: "cover", backgroundPosition: "center", opacity: 0.6, pointerEvents: "none", zIndex: 0 }} />
         <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 1 }}>
           {[...Array(5)].map((_, i) => (
             <div key={i} style={{ position: "absolute", left: `${10 + i * 22}%`, top: 0, bottom: 0, width: "1px", background: "rgba(255,255,255,0.04)" }} />
           ))}
         </div>
 
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 32px", textAlign: "center", position: "relative", zIndex: 2 }}>
-          <p style={{ fontSize: 50, fontWeight: 700, color: "#93c5fd", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 10,textAlign:"center" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "0 16px" : "0 32px", textAlign: "center", position: "relative", zIndex: 2 }}>
+          <p style={{ fontSize: isMobile ? 28 : 50, fontWeight: 700, color: "#93c5fd", letterSpacing: isMobile ? "2px" : "3px", textTransform: "uppercase", marginBottom: 10, textAlign: "center" }}>
             Gallery
           </p>
-          <h1 style={{ fontSize: "clamp(32px, 5vw, 58px)", fontWeight: 900, color: "white", lineHeight: 1.08, letterSpacing: "-2px", marginBottom: 20 }}>
+          <h1 style={{ fontSize: isMobile ? "28px" : "clamp(32px, 5vw, 58px)", fontWeight: 900, color: "white", lineHeight: 1.08, letterSpacing: isMobile ? "-1px" : "-2px", marginBottom: 16 }}>
             Moments That{" "}
             <span style={{ color: "#93c5fd" }}>Define Us.</span>
           </h1>
-          <p style={{ fontSize: 18, color: "rgba(255,255,255,0.6)", lineHeight: 1.8, maxWidth: 600, margin: "0 auto", fontWeight: 500 }}>
+          <p style={{ fontSize: isMobile ? 15 : 18, color: "rgba(255,255,255,0.6)", lineHeight: 1.8, maxWidth: 600, margin: "0 auto", fontWeight: 500 }}>
             A glimpse into our classrooms, events, and student achievements — the memories we build together.
           </p>
         </div>
       </section>
 
       {/* ── FILTER TABS ── */}
-      <div style={{ background: "#f0f7f5", borderBottom: "1px solid #d4eae4", padding: "20px 32px", display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
+      <div style={{
+        background: "#f0f7f5",
+        borderBottom: "1px solid #d4eae4",
+        padding: isMobile ? "16px" : "20px 32px",
+        display: "flex",
+        justifyContent: "center",
+        gap: isMobile ? 8 : 10,
+        flexWrap: "wrap",
+      }}>
         {(["All", "Classroom", "Events", "Achievements"] as Category[]).map(cat => (
           <button
             key={cat}
             onClick={() => setActiveFilter(cat)}
             style={{
-              padding: "8px 22px",
+              padding: isMobile ? "7px 16px" : "8px 22px",
               borderRadius: 999,
               border: activeFilter === cat ? "none" : "1.5px solid #a7c4bc",
               background: activeFilter === cat ? "#1e3a35" : "white",
               color: activeFilter === cat ? "white" : "#1e3a35",
-              fontWeight: 700, fontSize: 14, cursor: "pointer",
+              fontWeight: 700,
+              fontSize: isMobile ? 13 : 14,
+              cursor: "pointer",
               transition: "all 0.2s",
             }}
           >
@@ -118,28 +146,30 @@ const Gallery = () => {
       </div>
 
       {/* ── MASONRY GRID ── */}
-      <section style={{ padding: "56px 0", background: "#ffffff" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px" }}>
-
+      <section style={{ padding: isMobile ? "32px 0" : "56px 0", background: "#ffffff" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: isMobile ? "0 12px" : "0 32px" }}>
           {filtered.length === 0 ? (
             <div style={{ textAlign: "center", padding: "80px 0", color: "#94a3b8", fontSize: 18 }}>
               No images in this category yet.
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, alignItems: "start" }}>
-              {[col1, col2, col3].map((col, colIdx) => (
-                <div key={colIdx} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ display: "grid", gridTemplateColumns: `repeat(${numCols}, 1fr)`, gap: isMobile ? 10 : 16, alignItems: "start" }}>
+              {cols.map((col, colIdx) => (
+                <div key={colIdx} style={{ display: "flex", flexDirection: "column", gap: isMobile ? 10 : 16 }}>
                   {col.map(item => (
                     <div
                       key={item.id}
                       onClick={() => openLightbox(getFilteredIndex(item))}
                       style={{
                         position: "relative",
-                        borderRadius: 14,
+                        borderRadius: isMobile ? 10 : 14,
                         overflow: "hidden",
                         cursor: "pointer",
                         border: "1.5px solid #e2e8f0",
-                        height: item.tall ? 320 : 220,
+                        // On mobile flatten tall/short difference slightly
+                        height: isMobile
+                          ? (item.tall ? 200 : 150)
+                          : (item.tall ? 320 : 220),
                         transition: "transform 0.2s, box-shadow 0.2s",
                       }}
                       onMouseEnter={e => {
@@ -154,36 +184,41 @@ const Gallery = () => {
                         const overlay = e.currentTarget.querySelector(".overlay") as HTMLDivElement;
                         if (overlay) overlay.style.transform = "translateY(100%)";
                       }}
+                      // On mobile show overlay always (no hover)
+                      onTouchStart={e => {
+                        const overlay = e.currentTarget.querySelector(".overlay") as HTMLDivElement;
+                        if (overlay) overlay.style.transform = "translateY(0)";
+                      }}
                     >
-                      {/* Image */}
                       <img
                         src={item.src}
                         alt={item.title}
                         style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                       />
 
-                      {/* Hover overlay */}
+                      {/* Overlay — always visible on mobile */}
                       <div
                         className="overlay"
                         style={{
                           position: "absolute", bottom: 0, left: 0, right: 0,
                           background: "linear-gradient(to top, rgba(30,58,53,0.95) 0%, rgba(30,58,53,0.7) 60%, transparent 100%)",
-                          padding: "20px 16px 16px",
-                          transform: "translateY(100%)",
+                          padding: isMobile ? "14px 10px 10px" : "20px 16px 16px",
+                          transform: isMobile ? "translateY(0)" : "translateY(100%)",
                           transition: "transform 0.3s ease",
                         }}
                       >
                         <span style={{
                           display: "inline-block",
-                          fontSize: 11, fontWeight: 700,
+                          fontSize: isMobile ? 10 : 11,
+                          fontWeight: 700,
                           background: CATEGORY_COLORS[item.category],
                           color: CATEGORY_TEXT[item.category],
                           padding: "3px 10px", borderRadius: 20,
-                          marginBottom: 6, letterSpacing: "0.5px",
+                          marginBottom: 4, letterSpacing: "0.5px",
                         }}>
                           {item.category}
                         </span>
-                        <p style={{ color: "white", fontWeight: 700, fontSize: 14, margin: 0 }}>{item.title}</p>
+                        <p style={{ color: "white", fontWeight: 700, fontSize: isMobile ? 12 : 14, margin: 0 }}>{item.title}</p>
                       </div>
                     </div>
                   ))}
@@ -195,17 +230,17 @@ const Gallery = () => {
       </section>
 
       {/* ── STATS STRIP ── */}
-      <section style={{ background: "#1e3a35", padding: "40px 0" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px" }}>
+      <section style={{ background: "#1e3a35", padding: isMobile ? "28px 0" : "40px 0" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", padding: isMobile ? "0 12px" : "0 24px" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)" }}>
             {[
               { value: "1,000+", label: "Students Trained" },
               { value: "50+",    label: "Events Conducted" },
               { value: "100%",   label: "Placement Rate" },
             ].map((stat, i) => (
-              <div key={i} style={{ textAlign: "center", padding: "16px 8px", borderRight: i < 2 ? "1px solid rgba(255,255,255,0.15)" : "none" }}>
-                <div style={{ fontSize: 36, fontWeight: 900, color: "#c9953a", letterSpacing: "-1px" }}>{stat.value}</div>
-                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "1.5px", marginTop: 4 }}>{stat.label}</div>
+              <div key={i} style={{ textAlign: "center", padding: isMobile ? "12px 4px" : "16px 8px", borderRight: i < 2 ? "1px solid rgba(255,255,255,0.15)" : "none" }}>
+                <div style={{ fontSize: isMobile ? 24 : 36, fontWeight: 900, color: "#c9953a", letterSpacing: "-1px" }}>{stat.value}</div>
+                <div style={{ fontSize: isMobile ? 10 : 13, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "1px", marginTop: 4 }}>{stat.label}</div>
               </div>
             ))}
           </div>
@@ -213,24 +248,31 @@ const Gallery = () => {
       </section>
 
       {/* ── CTA STRIP ── */}
-      <section style={{ padding: "64px 0", background: "#ffffff", borderTop: "1px solid #e2e8f0" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 32px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
+      <section style={{ padding: isMobile ? "36px 0" : "64px 0", background: "#ffffff", borderTop: "1px solid #e2e8f0" }}>
+        <div style={{
+          maxWidth: 1100, margin: "0 auto", padding: isMobile ? "0 16px" : "0 32px",
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          justifyContent: "space-between",
+          alignItems: isMobile ? "flex-start" : "center",
+          flexWrap: "wrap", gap: isMobile ? 20 : 24,
+        }}>
           <div>
-            <h3 style={{ fontSize: 30, fontWeight: 700, color: "#0f172a", letterSpacing: "-0.5px", marginBottom: 6 }}>Want to be part of our story?</h3>
-            <p style={{ fontSize: 20, color: "#64748b", margin: 0 }}>Book a free demo class and start your journey with us.</p>
+            <h3 style={{ fontSize: isMobile ? 22 : 30, fontWeight: 700, color: "#0f172a", letterSpacing: "-0.5px", marginBottom: 6 }}>Want to be part of our story?</h3>
+            <p style={{ fontSize: isMobile ? 15 : 20, color: "#64748b", margin: 0 }}>Book a free demo class and start your journey with us.</p>
           </div>
-          <div style={{ display: "flex", gap: 12 }}>
-            <Link to="/contact">
+          <div style={{ display: "flex", gap: 12, width: isMobile ? "100%" : "auto" }}>
+            <Link to="/contact" style={isMobile ? { flex: 1 } : {}}>
               <button
-                style={{ background: "#1e3a35", color: "white", border: "none", padding: "13px 28px", borderRadius: 8, fontSize: 16, fontWeight: 900, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8 }}
+                style={{ width: isMobile ? "100%" : "auto", background: "#1e3a35", color: "white", border: "none", padding: isMobile ? "12px 16px" : "13px 28px", borderRadius: 8, fontSize: isMobile ? 14 : 16, fontWeight: 900, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}
                 onMouseEnter={e => ((e.currentTarget as HTMLButtonElement).style.background = "#c9953a")}
                 onMouseLeave={e => ((e.currentTarget as HTMLButtonElement).style.background = "#1e3a35")}
               >
                 Book Free Demo <ArrowRight size={15} />
               </button>
             </Link>
-            <Link to="/courses">
-              <button style={{ background: "transparent", color: "#1e3a35", border: "1.5px solid #a7c4bc", padding: "13px 28px", borderRadius: 8, fontSize: 16, fontWeight: 900, cursor: "pointer" }}>
+            <Link to="/courses" style={isMobile ? { flex: 1 } : {}}>
+              <button style={{ width: isMobile ? "100%" : "auto", background: "transparent", color: "#1e3a35", border: "1.5px solid #a7c4bc", padding: isMobile ? "12px 16px" : "13px 28px", borderRadius: 8, fontSize: isMobile ? 14 : 16, fontWeight: 900, cursor: "pointer" }}>
                 Browse Courses
               </button>
             </Link>
@@ -252,27 +294,27 @@ const Gallery = () => {
           {/* Close */}
           <button
             onClick={closeLightbox}
-            style={{ position: "absolute", top: 24, right: 24, background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "white" }}
+            style={{ position: "absolute", top: isMobile ? 16 : 24, right: isMobile ? 16 : 24, background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", width: isMobile ? 38 : 44, height: isMobile ? 38 : 44, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "white" }}
           >
-            <X size={20} />
+            <X size={isMobile ? 18 : 20} />
           </button>
 
           {/* Prev */}
           <button
             onClick={e => { e.stopPropagation(); prevImage(); }}
-            style={{ position: "absolute", left: 24, background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", width: 48, height: 48, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "white" }}
+            style={{ position: "absolute", left: isMobile ? 8 : 24, background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", width: isMobile ? 38 : 48, height: isMobile ? 38 : 48, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "white" }}
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={isMobile ? 20 : 24} />
           </button>
 
           {/* Image */}
-          <div onClick={e => e.stopPropagation()} style={{ maxWidth: "85vw", maxHeight: "85vh", textAlign: "center" }}>
+          <div onClick={e => e.stopPropagation()} style={{ maxWidth: isMobile ? "90vw" : "85vw", maxHeight: "85vh", textAlign: "center" }}>
             <img
               src={filtered[lightbox].src}
               alt={filtered[lightbox].title}
-              style={{ maxWidth: "100%", maxHeight: "75vh", borderRadius: 12, objectFit: "contain" }}
+              style={{ maxWidth: "100%", maxHeight: isMobile ? "65vh" : "75vh", borderRadius: 12, objectFit: "contain" }}
             />
-            <div style={{ marginTop: 16 }}>
+            <div style={{ marginTop: 12 }}>
               <span style={{
                 fontSize: 11, fontWeight: 700,
                 background: CATEGORY_COLORS[filtered[lightbox].category],
@@ -281,7 +323,7 @@ const Gallery = () => {
               }}>
                 {filtered[lightbox].category}
               </span>
-              <span style={{ color: "white", fontWeight: 700, fontSize: 16 }}>{filtered[lightbox].title}</span>
+              <span style={{ color: "white", fontWeight: 700, fontSize: isMobile ? 14 : 16 }}>{filtered[lightbox].title}</span>
             </div>
             <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, marginTop: 8 }}>
               {lightbox + 1} / {filtered.length}
@@ -291,22 +333,13 @@ const Gallery = () => {
           {/* Next */}
           <button
             onClick={e => { e.stopPropagation(); nextImage(); }}
-            style={{ position: "absolute", right: 24, background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", width: 48, height: 48, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "white" }}
+            style={{ position: "absolute", right: isMobile ? 8 : 24, background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", width: isMobile ? 38 : 48, height: isMobile ? 38 : 48, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "white" }}
           >
-            <ChevronRight size={24} />
+            <ChevronRight size={isMobile ? 20 : 24} />
           </button>
         </div>
       )}
 
-      {/* Responsive */}
-      <style>{`
-        @media (max-width: 768px) {
-          .masonry-grid { grid-template-columns: repeat(2, 1fr) !important; }
-        }
-        @media (max-width: 480px) {
-          .masonry-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </div>
   );
 };
