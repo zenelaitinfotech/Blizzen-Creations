@@ -145,8 +145,8 @@ const Footer = () => {
         <div className="footer-grid" style={{ maxWidth: "1200px", margin: "0 auto", position: "relative", zIndex: 1 }}>
 
           {/* ── COL 1: Brand block ── */}
-          <div className="footer-col-brand" style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-            <img src={logo} alt="Blizzen Creations" style={{ height: "80px", width: "auto", objectFit: "contain" }} />
+          <div className="footer-col-brand" style={{ display: "flex", flexDirection: "column", gap: "18px", alignItems: "flex-start" }}>
+           <img src={logo} alt="Blizzen Creations" style={{ height: "80px", width: "auto", objectFit: "contain", alignSelf: "flex-start" }} />
 
             <p
               style={{ color: "rgba(255,255,255,0.75)", fontSize: "14px", lineHeight: "1.7", maxWidth: "380px", margin: 0 }}
