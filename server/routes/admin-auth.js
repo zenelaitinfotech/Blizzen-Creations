@@ -1,22 +1,11 @@
 import express from 'express';
 import crypto from 'crypto';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import Admin from '../models/Admin.js';
 
 const router = express.Router();
 
-const getTransporter = () => nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-});
+const getResend = () => new Resend(process.env.RESEND_API_KEY);
 
 // ── POST /api/admin-auth/forgot-password ──
 router.post('/forgot-password', async (req, res) => {
@@ -41,8 +30,8 @@ router.post('/forgot-password', async (req, res) => {
 
     const resetUrl = `${process.env.VITE_FRONTEND_URL || 'http://localhost:8080'}/reset-password?token=${resetToken}`;
 
-    await getTransporter().sendMail({
-      from: `"Blizzen Creations" <${process.env.GMAIL_USER}>`,
+    await getResend().emails.send({
+      from: 'Blizzen Creations <onboarding@resend.dev>',
       to: admin.email,
       subject: '🔐 Admin Password Reset - Blizzen Creations',
       html: `
@@ -126,8 +115,8 @@ router.post('/reset-password', async (req, res) => {
     admin.resetTokenExpiry = null;
     await admin.save();
 
-    await getTransporter().sendMail({
-      from: `"Blizzen Creations" <${process.env.GMAIL_USER}>`,
+    await getResend().emails.send({
+      from: 'Blizzen Creations <onboarding@resend.dev>',
       to: admin.email,
       subject: '✅ Admin Credentials Updated - Blizzen Creations',
       html: `
