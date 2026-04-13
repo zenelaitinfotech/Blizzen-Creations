@@ -20,6 +20,8 @@ import blogRoutes from "./routes/blog.js";
 import navbarRoutes from "./routes/navbar.js";
 import galleryRoutes from "./routes/gallery.js";
 import landingRoutes from "./routes/landing.routes.js";
+import adminAuthRouter from './routes/admin-auth.js';
+
 
 /* ===== CONFIG ===== */
 const __filename = fileURLToPath(import.meta.url);
@@ -93,6 +95,7 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/navbar", navbarRoutes);
 app.use("/api/landing", landingRoutes);
 app.use("/api/gallery", galleryRoutes);
+app.use('/api/admin-auth', adminAuthRouter);
 
 /* ===== HEALTH CHECK ===== */
 app.get("/api/health", (req, res) => {

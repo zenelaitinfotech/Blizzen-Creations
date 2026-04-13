@@ -395,7 +395,7 @@ const Placement = () => {
               >
                 <div style={{ fontSize: isMobile ? 28 : 35, marginBottom: 12 }}>{item.icon}</div>
                 <div className="career-title" style={{ fontSize: isMobile ? 13 : 16, fontWeight: 700, color: "#0f172a", marginBottom: 6, transition: "color 0.2s" }}>{item.role}</div>
-                <p className="career-desc" style={{ fontSize: isMobile ? 12 : 15, color: "#64748b", lineHeight: 1.7, margin: 0, transition: "color 0.2s" }}>{item.desc}</p>
+               <p className="career-desc" style={{ fontSize: isMobile ? 12 : 15, color: "#64748b", lineHeight: 1.6, margin: 0, transition: "color 0.2s", textAlign: "left", wordBreak: "break-word", hyphens: "none" }}>{item.desc}</p>
               </div>
             ))}
           </div>

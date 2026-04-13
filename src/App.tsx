@@ -22,6 +22,7 @@ import QuickAccessButtons from "./components/QuickAccessButtons";
 import { useScrollEnquiry } from "./hooks/useScrollEnquiry";
 import LandingPage from "./pages/Landing";
 import Gallery from "./pages/Gallery";
+import ResetPassword from "@/pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,7 @@ const AppLayout = () => {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/landing" element={<LandingPage />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </main>
 

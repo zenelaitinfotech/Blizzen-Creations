@@ -14,6 +14,10 @@ interface HomeContent {
   heroDescription: string;
   heroImage?: string;
   featuredCourses: string[];
+  batchBanner: {
+    date: string;
+    isVisible: boolean;
+  };
   testimonials: Array<{ name: string; role: string; message: string; image?: string }>;
   stats: Array<{ label: string; value: string }>;
   callToAction: { title: string; description: string; buttonText: string };
@@ -209,15 +213,21 @@ const journeySteps = [
   return (
     <div style={{ fontFamily: 'system-ui, sans-serif', background: '#ffffff', color: '#0f172a' }}>
 
-      {/* ── ANNOUNCEMENT BAR ── */}
-      <div style={{ background: '#c9953a', padding: isMobile ? '8px 12px' : '10px 16px', textAlign: 'center' }}>
-        <span style={{ color: 'black', fontSize: isMobile ? '14px' : '18px', fontWeight: 900, letterSpacing: '0.3px' }}>
-          🎓 New Batch Starting &nbsp;
-          <span style={{ background: 'rgba(255,255,255,0.25)', padding: '2px 10px', borderRadius: '20px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.4)' }}>April 10, 2026</span>
-          &nbsp;— Limited Seats! &nbsp;
-          <Link to="/contact" style={{ color: 'white', textDecoration: 'underline', fontWeight: 800 }}>Enroll Now →</Link>
-        </span>
-      </div>
+  {/* ── ANNOUNCEMENT BAR ── */}
+{homeContent.batchBanner?.isVisible && homeContent.batchBanner?.date && (
+  <div style={{ background: '#c9953a', padding: isMobile ? '8px 12px' : '10px 16px', textAlign: 'center' }}>
+    <span style={{ color: 'black', fontSize: isMobile ? '14px' : '18px', fontWeight: 900, letterSpacing: '0.3px' }}>
+      🎓 New Batch Starting &nbsp;
+      <span style={{ background: 'rgba(255,255,255,0.25)', padding: '2px 10px', borderRadius: '20px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.4)' }}>
+        {new Date(homeContent.batchBanner.date).toLocaleDateString("en-IN", {
+          day: "numeric", month: "long", year: "numeric"
+        })}
+      </span>
+      &nbsp;— Limited Seats! &nbsp;
+      <Link to="/contact" style={{ color: 'white', textDecoration: 'underline', fontWeight: 800 }}>Enroll Now →</Link>
+    </span>
+  </div>
+)}
 
       {/* ── HERO ── */}
       <section style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', minHeight: isMobile ? 'auto' : '90vh' }}>

@@ -74,7 +74,8 @@ router.post('/', async (req, res) => {
       featuredCourses,
       stats,
       testimonials,
-      callToAction
+      callToAction,
+      batchBanner
     } = req.body;
 
     // Validation
@@ -104,6 +105,7 @@ router.post('/', async (req, res) => {
       homeContent.stats = stats || homeContent.stats;
       homeContent.testimonials = testimonials || homeContent.testimonials;
       homeContent.callToAction = callToAction;
+      homeContent.batchBanner = batchBanner || homeContent.batchBanner;
     } else {
       // Create new
       homeContent = new HomeContent({

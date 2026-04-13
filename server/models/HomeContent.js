@@ -30,10 +30,14 @@ const homeContentSchema = new mongoose.Schema(
         value: String
       }
     ],
-    callToAction: {
+   callToAction: {
       title: String,
       description: String,
       buttonText: String
+    },
+    batchBanner: {
+      date: { type: String, default: "" },
+      isVisible: { type: Boolean, default: true }
     }
   },
   {

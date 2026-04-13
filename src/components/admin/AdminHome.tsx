@@ -14,6 +14,10 @@ interface HomeContent {
   heroDescription: string;
   heroImage?: string;
   featuredCourses: string[];
+  batchBanner: {
+    date: string;
+    isVisible: boolean;
+  };
   testimonials: Array<{
     name: string;
     role: string;
@@ -40,6 +44,10 @@ const AdminHome = () => {
     heroDescription: "",
     heroImage: "",
     featuredCourses: [],
+    batchBanner: {
+      date: "",
+      isVisible: true,
+    },
     testimonials: [
       { name: "", role: "", message: "", image: "" }
     ],
@@ -62,7 +70,10 @@ const AdminHome = () => {
       setLoading(true);
       const response = await apiService.getHomeContent();
       if (response.success && response.data) {
-        setHomeContent(response.data);
+        setHomeContent({
+          ...response.data,
+          batchBanner: response.data.batchBanner ?? { date: "", isVisible: true },
+        });
       }
     } catch (error: any) {
       toast({
@@ -113,7 +124,7 @@ const AdminHome = () => {
   const updateTestimonial = (index: number, field: string, value: string) => {
     setHomeContent(prev => ({
       ...prev,
-      testimonials: prev.testimonials.map((testimonial, i) => 
+      testimonials: prev.testimonials.map((testimonial, i) =>
         i === index ? { ...testimonial, [field]: value } : testimonial
       )
     }));
@@ -136,7 +147,7 @@ const AdminHome = () => {
   const updateStat = (index: number, field: string, value: string) => {
     setHomeContent(prev => ({
       ...prev,
-      stats: prev.stats.map((stat, i) => 
+      stats: prev.stats.map((stat, i) =>
         i === index ? { ...stat, [field]: value } : stat
       )
     }));
@@ -168,7 +179,67 @@ const AdminHome = () => {
         </Button>
       </div>
 
-      {/* Hero Section */}
+      {/* ── Announcement Banner Section ── */}
+      <Card className="border-primary/20">
+        <CardHeader>
+          <CardTitle>📢 Announcement Banner</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Visibility Toggle */}
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="bannerVisible"
+              checked={homeContent.batchBanner?.isVisible ?? true}
+              onChange={(e) =>
+                setHomeContent(prev => ({
+                  ...prev,
+                  batchBanner: { ...prev.batchBanner, isVisible: e.target.checked }
+                }))
+              }
+              className="w-4 h-4 accent-primary cursor-pointer"
+            />
+            <Label htmlFor="bannerVisible" className="cursor-pointer">
+              Show Banner on Homepage
+            </Label>
+          </div>
+
+          {/* Date Picker */}
+          <div>
+            <Label htmlFor="batchDate">New Batch Starting Date</Label>
+            <Input
+              id="batchDate"
+              type="date"
+              value={homeContent.batchBanner?.date || ""}
+              onChange={(e) =>
+                setHomeContent(prev => ({
+                  ...prev,
+                  batchBanner: { ...prev.batchBanner, date: e.target.value }
+                }))
+              }
+            />
+          </div>
+
+          {/* Live Preview */}
+          {homeContent.batchBanner?.date && (
+            <div className="rounded-lg p-3 text-sm font-medium" style={{ background: '#c9953a', color: '#000' }}>
+              <span>
+                🎓 New Batch Starting &nbsp;
+                <span style={{ background: 'rgba(255,255,255,0.3)', padding: '2px 10px', borderRadius: '20px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.5)' }}>
+                  {new Date(homeContent.batchBanner.date).toLocaleDateString("en-IN", {
+                    day: "numeric", month: "long", year: "numeric"
+                  })}
+                </span>
+                &nbsp;— Limited Seats! &nbsp;
+                <span style={{ color: 'white', textDecoration: 'underline', fontWeight: 800 }}>Enroll Now →</span>
+              </span>
+              <p className="text-xs mt-2 opacity-70">↑ Live preview of how the banner will appear on the homepage</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* ── Hero Section ── */}
       <Card className="border-primary/20">
         <CardHeader>
           <CardTitle>Hero Section</CardTitle>
@@ -204,7 +275,7 @@ const AdminHome = () => {
         </CardContent>
       </Card>
 
-      {/* Stats Section */}
+      {/* ── Stats Section ── */}
       <Card className="border-primary/20">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -247,7 +318,7 @@ const AdminHome = () => {
         </CardContent>
       </Card>
 
-      {/* Testimonials Section */}
+      {/* ── Testimonials Section ── */}
       <Card className="border-primary/20">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -312,7 +383,7 @@ const AdminHome = () => {
         </CardContent>
       </Card>
 
-      {/* Call to Action Section */}
+      {/* ── Call to Action Section ── */}
       <Card className="border-primary/20">
         <CardHeader>
           <CardTitle>Call to Action</CardTitle>
