@@ -5,12 +5,17 @@ import Admin from '../models/Admin.js';
 
 const router = express.Router();
 
-// ✅ Transporter as a function so env vars are loaded at request time
 const getTransporter = () => nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
+  requireTLS: true,
   auth: {
     user: process.env.GMAIL_USER,
     pass: process.env.GMAIL_APP_PASSWORD,
+  },
+  tls: {
+    rejectUnauthorized: false,
   },
 });
 
